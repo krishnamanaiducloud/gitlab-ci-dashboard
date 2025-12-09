@@ -1,58 +1,64 @@
-<div class="flex flex-col gap-1">
+<div class="flex flex-col gap-1 w-full">
 
-  <!-- FILTER ROW -->
-  <div class="flex flex-wrap gap-3 items-center">
+  <!-- TOP FILTER ROW (LEFT FILTERS + RIGHT CSV BUTTON) -->
+  <div class="flex justify-between items-center w-full">
 
-    <!-- PROJECT FILTER -->
-    <gcd-project-filter
-      [projects]="projects()"
-      [filterText]="filterProject()"
-      (filterTextChange)="onFilterProjectChanged($event)"
-    />
+    <!-- LEFT SIDE FILTERS (NO WRAP, SCROLL HORIZONTALLY IF NEEDED) -->
+    <div class="flex flex-nowrap gap-3 items-center overflow-x-auto">
 
-    <!-- GROUP FILTER -->
-    <gcd-text-filter
-      [filterText]="filterGroup()"
-      placeholder="Search groups..."
-      (filterTextChange)="onFilterGroupChanged($event)"
-    />
+      <!-- PROJECT FILTER -->
+      <gcd-project-filter
+        [projects]="projects()"
+        [filterText]="filterProject()"
+        (filterTextChange)="onFilterProjectChanged($event)"
+      ></gcd-project-filter>
 
-    <!-- BRANCH FILTER -->
-    <gcd-text-filter
-      [filterText]="filterBranch()"
-      placeholder="Search branches..."
-      (filterTextChange)="onFilterBranchChanged($event)"
-    />
+      <!-- GROUP FILTER -->
+      <gcd-text-filter
+        [filterText]="filterGroup()"
+        placeholder="Search groups..."
+        (filterTextChange)="onFilterGroupChanged($event)"
+      ></gcd-text-filter>
 
-    <!-- TRIGGER FILTER -->
-    <gcd-text-filter
-      [filterText]="filterTrigger()"
-      placeholder="Search triggers..."
-      (filterTextChange)="onFilterTriggerChanged($event)"
-    />
+      <!-- BRANCH FILTER -->
+      <gcd-text-filter
+        [filterText]="filterBranch()"
+        placeholder="Search branches..."
+        (filterTextChange)="onFilterBranchChanged($event)"
+      ></gcd-text-filter>
 
-    <!-- TOPIC FILTER -->
-    <gcd-topic-filter
-      [loading]="loading()"
-      [projects]="projects()"
-      [filterTopics]="filterTopics()"
-      (filterTopicsChange)="onFilterTopicsChanged($event)"
-    />
+      <!-- TRIGGER FILTER -->
+      <gcd-text-filter
+        [filterText]="filterTrigger()"
+        placeholder="Search triggers..."
+        (filterTextChange)="onFilterTriggerChanged($event)"
+      ></gcd-text-filter>
 
-    <!-- JOB FILTER -->
-    <gcd-job-filter
-      [loading]="loading()"
-      [jobs]="jobs()"
-      [filterJobs]="filterJobs()"
-      (filterJobsChange)="onFilterJobsChanged($event)"
-    />
+      <!-- TOPIC FILTER -->
+      <gcd-topic-filter
+        [loading]="loading()"
+        [projects]="projects()"
+        [filterTopics]="filterTopics()"
+        (filterTopicsChange)="onFilterTopicsChanged($event)"
+      ></gcd-topic-filter>
 
-    <!-- EXPORT CSV -->
+      <!-- JOB FILTER -->
+      <gcd-job-filter
+        [loading]="loading()"
+        [jobs]="jobs()"
+        [filterJobs]="filterJobs()"
+        (filterJobsChange)="onFilterJobsChanged($event)"
+      ></gcd-job-filter>
+
+    </div>
+
+    <!-- RIGHT SIDE CSV BUTTON -->
     <button nz-button nzType="default" (click)="exportCsv()">
       Export CSV
     </button>
 
   </div>
+
 
   <!-- TABLE SECTION -->
   @if (loading()) {
@@ -72,5 +78,6 @@
     </gcd-pipeline-status-tabs>
 
   }
+
 </div>
 

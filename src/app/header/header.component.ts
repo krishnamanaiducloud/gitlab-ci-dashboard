@@ -17,6 +17,6 @@ export class HeaderComponent {
   readonly version = this.config.version
 
   onClick(): void {
-    window.open('https://github.com/larscom/gitlab-ci-dashboard', '_blank')
+    window.open('https://github.com/', '_blank')
   }
 }

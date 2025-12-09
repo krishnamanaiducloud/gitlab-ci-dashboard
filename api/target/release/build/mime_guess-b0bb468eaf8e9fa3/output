@@ -1,0 +1,1 @@
+cargo:rustc-env=MIME_TYPES_GENERATED_PATH=/home/mohan/gitlab-ci-dashboard/api/target/release/build/mime_guess-b0bb468eaf8e9fa3/out/mime_types_generated.rs

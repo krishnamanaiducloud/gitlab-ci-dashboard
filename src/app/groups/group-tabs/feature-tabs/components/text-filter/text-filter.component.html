@@ -1,0 +1,27 @@
+<div class="flex items-center">
+  <div class="max-width-275">
+    <nz-input-group [nzSuffix]="suffixIcon">
+      <input
+        type="text"
+        nz-input
+        autocomplete="off"
+        [placeholder]="placeholder"
+        [ngModel]="filterText"
+        (ngModelChange)="update($event)"
+      />
+    </nz-input-group>
+
+    <ng-template #suffixIcon>
+      <span
+        class="pointer"
+        nz-icon
+        nzType="close-square"
+        nz-tooltip
+        [nzTooltipMouseEnterDelay]="1"
+        nzTooltipTitle="Clear field"
+        (click)="clear()"
+      ></span>
+    </ng-template>
+  </div>
+</div>
+

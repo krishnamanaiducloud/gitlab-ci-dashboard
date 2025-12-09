@@ -37,4 +37,7 @@ export class AppComponent {
   onClick(): void {
     window.location.reload()
   }
+
+  currentYear: number = new Date().getFullYear()
 }
+

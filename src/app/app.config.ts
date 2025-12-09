@@ -1,27 +1,38 @@
-import { GroupTabsComponent } from '$groups/group-tabs/group-tabs.component'
-import { registerLocaleData } from '@angular/common'
-import { provideHttpClient } from '@angular/common/http'
-import en from '@angular/common/locales/en'
-import nl from '@angular/common/locales/nl'
+import { GroupTabsComponent } from '$groups/group-tabs/group-tabs.component';
+import { registerLocaleData } from '@angular/common';
+import { provideHttpClient } from '@angular/common/http';
+import en from '@angular/common/locales/en';
+import nl from '@angular/common/locales/nl';
 import {
   ApplicationConfig,
   inject,
   provideAppInitializer,
   provideZonelessChangeDetection
-} from '@angular/core'
-import { provideNoopAnimations } from '@angular/platform-browser/animations'
-import { Route, provideRouter, withHashLocation } from '@angular/router'
-import { NzI18nService, en_US, nl_NL } from 'ng-zorro-antd/i18n'
+} from '@angular/core';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { Route, provideRouter, withHashLocation } from '@angular/router';
 
-registerLocaleData(en)
-registerLocaleData(nl)
+import { NzI18nService, en_US, nl_NL } from 'ng-zorro-antd/i18n';
+
+// ⭐ CORRECT ICON IMPORTS (only once)
+import {
+  CloseCircleOutline,
+  CloseCircleFill,
+  CloseSquareOutline,
+  CloseSquareFill
+} from '@ant-design/icons-angular/icons';
+
+import { provideNzIcons } from 'ng-zorro-antd/icon';
+
+registerLocaleData(en);
+registerLocaleData(nl);
 
 const routes: Route[] = [
   { path: '', component: GroupTabsComponent },
   { path: ':groupId', component: GroupTabsComponent },
   { path: ':groupId/:featureId', component: GroupTabsComponent },
   { path: '**', redirectTo: '' }
-]
+];
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -29,17 +40,27 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideHttpClient(),
     provideRouter(routes, withHashLocation()),
+
+    // ⭐ REGISTER ALL ICONS REQUIRED BY YOUR FILTERS
+    provideNzIcons([
+      CloseCircleOutline,
+      CloseCircleFill,
+      CloseSquareOutline,
+      CloseSquareFill
+    ]),
+
     provideI18n()
   ]
-}
+};
 
 function provideI18n() {
   return provideAppInitializer(() => {
-    const i18n = inject(NzI18nService)
+    const i18n = inject(NzI18nService);
     if (navigator.languages.includes('nl')) {
-      i18n.setLocale(nl_NL)
+      i18n.setLocale(nl_NL);
     } else {
-      i18n.setLocale(en_US)
+      i18n.setLocale(en_US);
     }
-  })
+  });
 }
+

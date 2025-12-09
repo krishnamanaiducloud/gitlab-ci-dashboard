@@ -1,33 +1,76 @@
 <div class="flex flex-col gap-1">
-  <div class="flex justify-between">
-    <div class="flex flex-col gap-050">
-      <gcd-project-filter
-        [projects]="projects()"
-        [filterText]="filterText()"
-        (filterTextChange)="onFilterTextChanged($event)"
-      />
-      <gcd-topic-filter
-        [loading]="loading()"
-        [projects]="projects()"
-        [filterTopics]="filterTopics()"
-        (filterTopicsChange)="onFilterTopicsChanged($event)"
-      />
-      <gcd-job-filter
-        [loading]="loading()"
-        [jobs]="jobs()"
-        [filterJobs]="filterJobs()"
-        (filterJobsChange)="onFilterJobsChanged($event)"
-      />
-    </div>
+
+  <!-- FILTER ROW -->
+  <div class="flex flex-wrap gap-3 items-center">
+
+    <!-- PROJECT FILTER -->
+    <gcd-project-filter
+      [projects]="projects()"
+      [filterText]="filterProject()"
+      (filterTextChange)="onFilterProjectChanged($event)"
+    />
+
+    <!-- GROUP FILTER -->
+    <gcd-text-filter
+      [filterText]="filterGroup()"
+      placeholder="Search groups..."
+      (filterTextChange)="onFilterGroupChanged($event)"
+    />
+
+    <!-- BRANCH FILTER -->
+    <gcd-text-filter
+      [filterText]="filterBranch()"
+      placeholder="Search branches..."
+      (filterTextChange)="onFilterBranchChanged($event)"
+    />
+
+    <!-- TRIGGER FILTER -->
+    <gcd-text-filter
+      [filterText]="filterTrigger()"
+      placeholder="Search triggers..."
+      (filterTextChange)="onFilterTriggerChanged($event)"
+    />
+
+    <!-- TOPIC FILTER -->
+    <gcd-topic-filter
+      [loading]="loading()"
+      [projects]="projects()"
+      [filterTopics]="filterTopics()"
+      (filterTopicsChange)="onFilterTopicsChanged($event)"
+    />
+
+    <!-- JOB FILTER -->
+    <gcd-job-filter
+      [loading]="loading()"
+      [jobs]="jobs()"
+      [filterJobs]="filterJobs()"
+      (filterJobsChange)="onFilterJobsChanged($event)"
+    />
+
+    <!-- EXPORT CSV -->
+    <button nz-button nzType="default" (click)="exportCsv()">
+      Export CSV
+    </button>
+
   </div>
+
+  <!-- TABLE SECTION -->
   @if (loading()) {
-  <nz-spin />
+    <nz-spin />
   } @else {
-  <gcd-pipeline-status-tabs
-    [projectPipelines]="projectPipelines()"
-    [filterText]="filterText()"
-    [filterTopics]="filterTopics()"
-    [filterJobs]="filterJobs()"
-  />
+
+    <gcd-pipeline-status-tabs
+      [projectPipelines]="projectPipelines()"
+      [filterProject]="filterProject()"
+      [filterGroup]="filterGroup()"
+      [filterBranch]="filterBranch()"
+      [filterTrigger]="filterTrigger()"
+      [filterTopics]="filterTopics()"
+      [filterJobs]="filterJobs()"
+      [filterText]="filterProject()"
+    >
+    </gcd-pipeline-status-tabs>
+
   }
 </div>
+

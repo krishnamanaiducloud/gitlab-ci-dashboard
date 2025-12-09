@@ -11,3 +11,26 @@
   max-width: 500px;
   padding: 1rem;
 }
+
+.global-footer {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+
+  background: #fafafa;
+  padding: 12px 0;
+
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+
+  border-top: 1px solid #e5e5e5;
+  z-index: 1000;
+  
+  @media (max-width: 768px) {
+    font-size: 12px;
+    padding: 10px 0;
+  }
+}
+

@@ -1,10 +1,18 @@
 import { FETCH_REFRESH_INTERVAL } from '$groups/http'
 import { GroupId } from '$groups/model/group'
-import { PipelineId } from '$groups/model/pipeline'
 import { ProjectId, ProjectPipeline } from '$groups/model/project'
 import { forkJoinFlatten } from '$groups/util/fork'
 import { CommonModule } from '@angular/common'
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, input, signal } from '@angular/core'
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  computed,
+  inject,
+  input,
+  signal
+} from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { NzSpinModule } from 'ng-zorro-antd/spin'
 import { finalize, interval, switchMap } from 'rxjs'
@@ -13,17 +21,19 @@ import { ProjectFilterComponent } from '../components/project-filter/project-fil
 import { TopicFilterComponent } from '../components/topic-filter/topic-filter.component'
 import { PipelineStatusTabsComponent } from './pipeline-status-tabs/pipeline-status-tabs.component'
 import { LatestPipelineService } from './service/latest-pipeline.service'
-import { Job } from '$groups/model/job'
+import { TextFilterComponent } from '../components/text-filter/text-filter.component'
 
 @Component({
   selector: 'gcd-latest-pipelines',
+  standalone: true,
   imports: [
     CommonModule,
     NzSpinModule,
-    PipelineStatusTabsComponent,
     ProjectFilterComponent,
     TopicFilterComponent,
-    JobFilterComponent
+    JobFilterComponent,
+    PipelineStatusTabsComponent,
+    TextFilterComponent
   ],
   templateUrl: './latest-pipelines.component.html',
   styleUrls: ['./latest-pipelines.component.scss'],
@@ -35,21 +45,27 @@ export class LatestPipelinesComponent implements OnInit {
 
   groupMap = input.required<Map<GroupId, Set<ProjectId>>>()
 
-  filterText = signal('')
+  // NEW FILTER SIGNALS
+  filterProject = signal('')
+  filterGroup = signal('')
+  filterBranch = signal('')
+  filterTrigger = signal('')
+
+  // EXISTING FILTERS
   filterTopics = signal<string[]>([])
   filterJobs = signal<string[]>([])
+
   projectPipelines = signal<ProjectPipeline[]>([])
   loading = signal(false)
 
-  projects = computed(() => {
-    return this.projectPipelines()
+  projects = computed(() =>
+    this.projectPipelines()
       .filter(({ pipeline }) => pipeline != null)
       .map(({ project }) => project)
-  })
+  )
 
   jobs = computed(() =>
-    this.projectPipelines()
-      .flatMap(({ failed_jobs: jobs }) => jobs ?? [])
+    this.projectPipelines().flatMap(({ failed_jobs }) => failed_jobs ?? [])
   )
 
   ngOnInit(): void {
@@ -60,7 +76,7 @@ export class LatestPipelinesComponent implements OnInit {
       this.latestPipelineService.getProjectsWithLatestPipeline.bind(this.latestPipelineService)
     )
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe((projectPipelines) => this.projectPipelines.set(projectPipelines))
+      .subscribe((p) => this.projectPipelines.set(p))
 
     interval(FETCH_REFRESH_INTERVAL)
       .pipe(
@@ -72,18 +88,43 @@ export class LatestPipelinesComponent implements OnInit {
           )
         )
       )
-      .subscribe((projectPipelines) => this.projectPipelines.set(projectPipelines))
+      .subscribe((p) => this.projectPipelines.set(p))
   }
 
-  onFilterTopicsChanged(topics: string[]): void {
-    this.filterTopics.set(topics)
-  }
+  // FILTER HANDLERS
+  onFilterProjectChanged(v: string) { this.filterProject.set(v) }
+  onFilterGroupChanged(v: string) { this.filterGroup.set(v) }
+  onFilterBranchChanged(v: string) { this.filterBranch.set(v) }
+  onFilterTriggerChanged(v: string) { this.filterTrigger.set(v) }
+  onFilterTopicsChanged(v: string[]) { this.filterTopics.set(v) }
+  onFilterJobsChanged(v: string[]) { this.filterJobs.set(v) }
 
-  onFilterJobsChanged(jobs: string[]): void {
-    this.filterJobs.set(jobs)
-  }
+  // EXPORT CSV
+  exportCsv() {
+    const rows = this.projectPipelines().map(p => ({
+      project: p.project.name,
+      group: p.project.namespace.name,
+      branch: p.project.default_branch,
+      trigger: p.pipeline?.source ?? '',
+      last_run: p.pipeline?.updated_at ?? ''
+    }))
 
-  onFilterTextChanged(filterText: string): void {
-    this.filterText.set(filterText)
+    const csv = [
+      'Project,Group,Branch,Trigger,Last Run',
+      ...rows.map(r =>
+        `${r.project},${r.group},${r.branch},${r.trigger},${r.last_run}`
+      )
+    ].join('\n')
+
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'latest-pipelines.csv'
+    a.click()
+
+    URL.revokeObjectURL(url)
   }
 }
+

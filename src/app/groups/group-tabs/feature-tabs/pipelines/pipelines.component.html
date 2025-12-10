@@ -1,27 +1,64 @@
-<div class="flex flex-col gap-1">
-  <div class="flex justify-between">
-    <div class="flex flex-col gap-050">
-      <div class="flex gap-050">
-        <gcd-project-filter
-          [projects]="projects()"
-          [filterText]="filterTextProject()"
-          (filterTextChange)="onFilterTextProjectsChanged($event)"
-        />
-        <gcd-branch-filter
-          [branches]="branches()"
-          [filterText]="filterTextBranch()"
-          (filterTextChange)="onFilterTextBranchesChanged($event)"
-        />
-      </div>
+<div class="flex flex-col gap-2 w-full">
+
+  <!-- FILTER ROW -->
+  <div class="flex justify-between items-center w-full">
+
+    <!-- LEFT FILTERS -->
+    <div class="flex flex-nowrap gap-3 items-center overflow-x-auto">
+
+      <!-- PROJECT FILTER -->
+      <gcd-project-filter
+        [projects]="projects()"
+        [filterText]="filterTextProject()"
+        (filterTextChange)="onFilterTextProjectsChanged($event)"
+      ></gcd-project-filter>
+
+      <!-- GROUP FILTER (NEW) -->
+      <gcd-text-filter
+        [filterText]="filterGroup()"
+        placeholder="Search groups..."
+        (filterTextChange)="onFilterGroupChanged($event)"
+      ></gcd-text-filter>
+
+      <!-- BRANCH FILTER -->
+      <gcd-branch-filter
+        [branches]="branches()"
+        [filterText]="filterTextBranch()"
+        (filterTextChange)="onFilterTextBranchesChanged($event)"
+      ></gcd-branch-filter>
+
+      <!-- TRIGGER FILTER (NEW) -->
+      <gcd-text-filter
+        [filterText]="filterTrigger()"
+        placeholder="Search triggers..."
+        (filterTextChange)="onFilterTriggerChanged($event)"
+      ></gcd-text-filter>
+
+      <!-- STATUS FILTER (NOW A TEXT FILTER AS REQUESTED) -->
+      <gcd-text-filter
+        [filterText]="filterStatus()"
+        placeholder="Search status..."
+        (filterTextChange)="onFilterStatusChanged($event)"
+      ></gcd-text-filter>
+
+      <!-- TOPIC FILTER -->
       <gcd-topic-filter
         [loading]="loading()"
         [projects]="projects()"
         [filterTopics]="filterTopics()"
         (filterTopicsChange)="onFilterTopicsChanged($event)"
-      />
-      <gcd-status-filter [filterStatuses]="filterStatuses()" (filterStatusesChange)="onFilterStatusesChanged($event)" />
+      ></gcd-topic-filter>
+
     </div>
+
+    <!-- EXPORT BUTTON -->
+    <button nz-button nzType="default" (click)="exportCsv()">
+      Export CSV
+    </button>
+
   </div>
+
+  <!-- TABLE -->
   @if (loading()) {
     <nz-spin />
   } @else {
@@ -31,4 +68,6 @@
       (pinnedPipelinesChange)="onPinnedPipelinesChanged($event)"
     />
   }
+
 </div>
+

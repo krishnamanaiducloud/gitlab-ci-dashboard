@@ -2,8 +2,7 @@ import { FETCH_REFRESH_INTERVAL } from '$groups/http'
 import { GroupId } from '$groups/model/group'
 import { PipelineId } from '$groups/model/pipeline'
 import { ProjectId, ProjectPipeline, ProjectPipelines } from '$groups/model/project'
-import { Status } from '$groups/model/status'
-import { filterArrayNotNull, filterPipeline, filterProject } from '$groups/util/filter'
+import { filterArrayNotNull, filterProject } from '$groups/util/filter'
 import { forkJoinFlatten } from '$groups/util/fork'
 import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, input, signal } from '@angular/core'
@@ -13,7 +12,7 @@ import { finalize, interval, switchMap } from 'rxjs'
 import { ProjectFilterComponent } from '../components/project-filter/project-filter.component'
 import { TopicFilterComponent } from '../components/topic-filter/topic-filter.component'
 import { BranchFilterComponent } from './components/branch-filter/branch-filter.component'
-import { StatusFilterComponent } from './components/status-filter/status-filter.component'
+import { TextFilterComponent } from '../components/text-filter/text-filter.component'
 import { PipelineTableComponent } from './pipeline-table/pipeline-table.component'
 import { PipelinesService } from './service/pipelines.service'
 
@@ -27,7 +26,7 @@ const STORAGE_KEY = 'pinned_pipelines'
     ProjectFilterComponent,
     TopicFilterComponent,
     BranchFilterComponent,
-    StatusFilterComponent,
+    TextFilterComponent,
     PipelineTableComponent
   ],
   templateUrl: './pipelines.component.html',
@@ -41,9 +40,12 @@ export class PipelinesComponent implements OnInit {
   groupMap = input.required<Map<GroupId, Set<ProjectId>>>()
 
   filterTextProject = signal('')
+  filterGroup = signal('')
   filterTextBranch = signal('')
+  filterTrigger = signal('')
+  filterStatus = signal('')
   filterTopics = signal<string[]>([])
-  filterStatuses = signal<Status[]>([])
+
   pinnedPipelines = signal<PipelineId[]>(this.getPinnedPipelines())
 
   projectPipelines = signal<ProjectPipelines[]>([])
@@ -51,99 +53,128 @@ export class PipelinesComponent implements OnInit {
 
   filteredProjectPipelines = computed(() => {
     return this.projectPipelines()
-      .flatMap(({ project, pipelines, group_id }) => pipelines.map((pipeline) => ({ project, pipeline, group_id })))
-      .filter(({ pipeline, project }) => {
-        return (
-          filterProject(project, this.filterTextProject(), this.filterTopics()) &&
-          filterPipeline(pipeline, this.filterTextBranch(), this.filterStatuses())
-        )
-      })
+      .flatMap(({ project, pipelines, group_id }) =>
+        pipelines.map(pipeline => ({ project, pipeline, group_id }))
+      )
+      .filter(({ project }) =>
+        project.name.toLowerCase().includes(this.filterTextProject().toLowerCase())
+      )
+      .filter(({ project }) =>
+        project.namespace.name.toLowerCase().includes(this.filterGroup().toLowerCase())
+      )
+      .filter(({ pipeline }) =>
+        pipeline.ref.toLowerCase().includes(this.filterTextBranch().toLowerCase())
+      )
+      .filter(({ pipeline }) =>
+        pipeline.source.toLowerCase().includes(this.filterTrigger().toLowerCase())
+      )
+      .filter(({ pipeline }) =>
+        pipeline.status.toLowerCase().includes(this.filterStatus().toLowerCase())
+      )
       .sort((a, b) => this.sortByUpdatedAt(a, b))
       .sort((a, b) => this.sortPinned(a, b, this.pinnedPipelines()))
   })
 
-  projects = computed(() => {
-    return this.projectPipelines()
-      .filter(({ pipelines }) => pipelines.length > 0)
-      .map(({ project }) => project)
-  })
-  branches = computed(() => {
-    return filterArrayNotNull(this.projectPipelines().flatMap(({ pipelines }) => pipelines.map(({ ref }) => ref)))
-  })
+  projects = computed(() =>
+    this.projectPipelines()
+      .filter(x => x.pipelines.length > 0)
+      .map(x => x.project)
+  )
+
+  branches = computed(() =>
+    filterArrayNotNull(
+      this.projectPipelines().flatMap(({ pipelines }) =>
+        pipelines.map(p => p.ref)
+      )
+    )
+  )
 
   ngOnInit(): void {
     this.loading.set(true)
 
-    forkJoinFlatten(this.groupMap(), this.pipelinesService.getProjectsWithPipelines.bind(this.pipelinesService))
+    forkJoinFlatten(
+      this.groupMap(),
+      this.pipelinesService.getProjectsWithPipelines.bind(this.pipelinesService)
+    )
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe((projectPipelines) => this.projectPipelines.set(projectPipelines))
+      .subscribe(p => this.projectPipelines.set(p))
 
     interval(FETCH_REFRESH_INTERVAL)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         switchMap(() =>
-          forkJoinFlatten(this.groupMap(), this.pipelinesService.getProjectsWithPipelines.bind(this.pipelinesService))
+          forkJoinFlatten(
+            this.groupMap(),
+            this.pipelinesService.getProjectsWithPipelines.bind(this.pipelinesService)
+          )
         )
       )
-      .subscribe((projectPipelines) => this.projectPipelines.set(projectPipelines))
+      .subscribe(p => this.projectPipelines.set(p))
   }
 
-  onFilterTopicsChanged(topics: string[]) {
-    this.filterTopics.set(topics)
+  onFilterTopicsChanged(v: string[]) { this.filterTopics.set(v) }
+  onFilterTextProjectsChanged(v: string) { this.filterTextProject.set(v) }
+  onFilterGroupChanged(v: string) { this.filterGroup.set(v) }
+  onFilterTextBranchesChanged(v: string) { this.filterTextBranch.set(v) }
+  onFilterTriggerChanged(v: string) { this.filterTrigger.set(v) }
+  onFilterStatusChanged(v: string) { this.filterStatus.set(v) }
+
+  onPinnedPipelinesChanged(pinned: PipelineId[]) {
+    this.pinnedPipelines.set(pinned)
+    this.savePinnedPipelines(pinned)
   }
 
-  onFilterTextProjectsChanged(filterText: string) {
-    this.filterTextProject.set(filterText)
+  exportCsv() {
+    const rows = this.filteredProjectPipelines().map(p => ({
+      project: p.project.name,
+      group: p.project.namespace.name,
+      branch: p.pipeline.ref,
+      trigger: p.pipeline.source,
+      status: p.pipeline.status,
+      last_run: p.pipeline.updated_at
+    }))
+
+    const csv = [
+      'Project,Group,Branch,Trigger,Status,Last Run',
+      ...rows.map(r =>
+        `${r.project},${r.group},${r.branch},${r.trigger},${r.status},${r.last_run}`
+      )
+    ].join('\n')
+
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'pipelines.csv'
+    a.click()
+
+    URL.revokeObjectURL(url)
   }
 
-  onFilterTextBranchesChanged(filterText: string) {
-    this.filterTextBranch.set(filterText)
-  }
-
-  onFilterStatusesChanged(statuses: Status[]) {
-    this.filterStatuses.set(statuses)
-  }
-
-  onPinnedPipelinesChanged(pinnedPipelines: PipelineId[]) {
-    this.pinnedPipelines.set(pinnedPipelines)
-    this.savePinnedPipelines(pinnedPipelines)
-  }
-
-  private savePinnedPipelines(pinnedPipelines: PipelineId[]) {
-    try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(pinnedPipelines))
-    } catch (_) {}
+  private savePinnedPipelines(v: PipelineId[]) {
+    try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(v)) } catch {}
   }
 
   private getPinnedPipelines(): PipelineId[] {
     try {
       const item = sessionStorage.getItem(STORAGE_KEY)
-      if (item) {
-        return JSON.parse(item)
-      }
-    } catch (_) {}
-
-    return []
+      return item ? JSON.parse(item) : []
+    } catch {
+      return []
+    }
   }
 
-  private sortByUpdatedAt(a: ProjectPipeline, b: ProjectPipeline): number {
-    if (a.pipeline == null || b.pipeline == null) {
-      return 0
-    }
-    return new Date(b.pipeline.updated_at).getTime() - new Date(a.pipeline.updated_at).getTime()
+  private sortByUpdatedAt(a: ProjectPipeline, b: ProjectPipeline) {
+    const aTime = a.pipeline ? new Date(a.pipeline.updated_at).getTime() : 0;
+    const bTime = b.pipeline ? new Date(b.pipeline.updated_at).getTime() : 0;
+    return bTime - aTime;
   }
 
-  private sortPinned(a: ProjectPipeline, b: ProjectPipeline, pinnedPipelines: number[]): number {
-    const aPinned = pinnedPipelines.includes(Number(a.pipeline?.id))
-    const bPinned = pinnedPipelines.includes(Number(b.pipeline?.id))
-
-    if (aPinned && !bPinned) {
-      return -1
-    }
-    if (!aPinned && bPinned) {
-      return 1
-    }
-
-    return 0
+  private sortPinned(a: ProjectPipeline, b: ProjectPipeline, pinned: number[]) {
+    const aPinned = pinned.includes(Number(a.pipeline?.id))
+    const bPinned = pinned.includes(Number(b.pipeline?.id))
+    return aPinned === bPinned ? 0 : aPinned ? -1 : 1
   }
 }
+

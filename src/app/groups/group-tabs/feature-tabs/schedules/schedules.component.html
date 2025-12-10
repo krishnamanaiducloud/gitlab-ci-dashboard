@@ -1,29 +1,77 @@
-<div class="flex flex-col gap-1">
-  <div class="flex justify-between">
-    <div class="flex flex-col gap-050">
+<div class="flex flex-col gap-2 w-full">
+
+  <!-- FILTER ROW -->
+  <div class="flex justify-between items-center w-full">
+
+    <div class="flex flex-nowrap gap-3 items-center overflow-x-auto">
+
+      <!-- PROJECT -->
       <gcd-project-filter
         [projects]="projects()"
         [filterText]="filterText()"
         (filterTextChange)="onFilterTextChanged($event)"
-      />
+      ></gcd-project-filter>
+
+      <!-- GROUP -->
+      <gcd-text-filter
+        [filterText]="filterGroup()"
+        placeholder="Search groups..."
+        (filterTextChange)="onFilterGroupChanged($event)"
+      ></gcd-text-filter>
+
+      <!-- BRANCH -->
+      <gcd-text-filter
+        [filterText]="filterBranch()"
+        placeholder="Search branches..."
+        (filterTextChange)="onFilterBranchChanged($event)"
+      ></gcd-text-filter>
+
+      <!-- TRIGGER -->
+      <gcd-text-filter
+        [filterText]="filterTrigger()"
+        placeholder="Search triggers..."
+        (filterTextChange)="onFilterTriggerChanged($event)"
+      ></gcd-text-filter>
+
+      <!-- STATUS -->
+      <gcd-text-filter
+        [filterText]="filterStatus()"
+        placeholder="Search status..."
+        (filterTextChange)="onFilterStatusChanged($event)"
+      ></gcd-text-filter>
+
+      <!-- TOPIC -->
       <gcd-topic-filter
         [loading]="loading()"
         [projects]="projects()"
         [filterTopics]="filterTopics()"
         (filterTopicsChange)="onFilterTopicsChanged($event)"
-      />
-      <gcd-status-filter [filterStatuses]="filterStatuses()" (filterStatusesChange)="onFilterStatusesChanged($event)" />
+      ></gcd-topic-filter>
+
+      <!-- JOBS -->
       <gcd-job-filter
         [loading]="loading()"
         [jobs]="jobs()"
         [filterJobs]="filterJobs()"
         (filterJobsChange)="onFilterJobsChanged($event)"
-      />
+      ></gcd-job-filter>
+
     </div>
+
+    <button nz-button nzType="default" (click)="exportCsv()">
+      Export CSV
+    </button>
+
   </div>
+
+
   @if (loading()) {
-  <nz-spin />
+    <nz-spin />
   } @else {
-  <gcd-schedule-table [schedulePipelines]="filteredSchedulePipelines()" />
+    <gcd-schedule-table
+      [schedulePipelines]="filteredSchedulePipelines()"
+    ></gcd-schedule-table>
   }
+
 </div>
+

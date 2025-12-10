@@ -1,3 +1,30 @@
+/* Reduce nz-spin height */
 nz-spin {
   height: 25px;
 }
+
+/* Fix Filter-by baseline alignment */
+.filter-by-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 2px;
+  line-height: 1.2;
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  height: 24px;
+  line-height: 24px;
+}
+
+/* Normalize tag/chip components for vertical alignment */
+.filter-by-container ::ng-deep .tag,
+.filter-by-container ::ng-deep .ant-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 24px !important;
+  line-height: 24px !important;
+}
+

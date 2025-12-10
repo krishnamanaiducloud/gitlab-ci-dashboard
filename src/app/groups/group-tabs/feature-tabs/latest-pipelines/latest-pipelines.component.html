@@ -1,9 +1,28 @@
-<div class="flex flex-col gap-1 w-full">
+<div class="flex flex-col gap-2 w-full">
+
+  <!-- FILTER BY ROW : FIXED ALIGNMENT -->
+  <div class="filter-by-container flex items-center gap-3">
+
+    <span class="filter-label text-sm font-semibold text-gray-600 whitespace-nowrap">
+      Filter by
+    </span>
+
+    <!-- FAILED JOB CHIPS / TAGS ROW (overflow scroll kept) -->
+    <div class="flex flex-nowrap items-center gap-2 overflow-x-auto pb-1">
+      <gcd-job-filter
+        [loading]="loading()"
+        [jobs]="jobs()"
+        [filterJobs]="filterJobs()"
+        (filterJobsChange)="onFilterJobsChanged($event)"
+      ></gcd-job-filter>
+    </div>
+  </div>
+
 
   <!-- TOP FILTER ROW (LEFT FILTERS + RIGHT CSV BUTTON) -->
   <div class="flex justify-between items-center w-full">
 
-    <!-- LEFT SIDE FILTERS (NO WRAP, SCROLL HORIZONTALLY IF NEEDED) -->
+    <!-- LEFT SIDE FILTERS -->
     <div class="flex flex-nowrap gap-3 items-center overflow-x-auto">
 
       <!-- PROJECT FILTER -->
@@ -41,14 +60,6 @@
         [filterTopics]="filterTopics()"
         (filterTopicsChange)="onFilterTopicsChanged($event)"
       ></gcd-topic-filter>
-
-      <!-- JOB FILTER -->
-      <gcd-job-filter
-        [loading]="loading()"
-        [jobs]="jobs()"
-        [filterJobs]="filterJobs()"
-        (filterJobsChange)="onFilterJobsChanged($event)"
-      ></gcd-job-filter>
 
     </div>
 

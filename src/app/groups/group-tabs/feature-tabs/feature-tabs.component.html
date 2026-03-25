@@ -11,21 +11,19 @@
       <ng-template #title>
         <span nz-icon [nzType]="tab.icon"></span><span class="pointer">{{ tab.title }}</span>
       </ng-template>
-      <ng-template nz-tab>
-        <div class="tab-content">
-          @switch (tab.id) {
-            @case ('latest-pipelines') {
-              <gcd-latest-pipelines [groupMap]="groupMap()" />
-            }
-            @case ('pipelines') {
-              <gcd-pipelines [groupMap]="groupMap()" />
-            }
-            @case ('schedules') {
-              <gcd-schedules [groupMap]="groupMap()" />
-            }
+      <div class="tab-content">
+        @switch (tab.id) {
+          @case ('latest-pipelines') {
+            <gcd-latest-pipelines [groupMap]="groupMap()" />
           }
-        </div>
-      </ng-template>
+          @case ('pipelines') {
+            <gcd-pipelines [groupMap]="groupMap()" />
+          }
+          @case ('schedules') {
+            <gcd-schedules [groupMap]="groupMap()" />
+          }
+        }
+      </div>
     </nz-tab>
   }
 </nz-tabset>

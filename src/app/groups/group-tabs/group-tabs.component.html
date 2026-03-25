@@ -23,11 +23,9 @@
               >{{ group.name | maxLength: 25 }}</span
             >
           </ng-template>
-          <ng-template nz-tab>
-            @if (selectedGroupId() == group.id) {
-              <gcd-feature-tabs [groupMap]="getGroupMap(group)" />
-            }
-          </ng-template>
+          @if (selectedGroupId() == group.id) {
+            <gcd-feature-tabs [groupMap]="getGroupMap(group)" />
+          }
         </nz-tab>
       }
     </nz-tabset>

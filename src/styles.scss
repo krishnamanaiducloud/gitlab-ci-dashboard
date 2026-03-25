@@ -53,8 +53,10 @@ body {
   }
 }
 
+// ── Flexbox utilities ──────────────────────────────────────────────────────────
 .flex {
   display: flex;
+
   &-row {
     flex-direction: row;
   }
@@ -64,8 +66,22 @@ body {
   &-wrap {
     flex-wrap: wrap;
   }
+  &-nowrap {
+    flex-wrap: nowrap;
+  }
 }
 
+// ── Width utilities ────────────────────────────────────────────────────────────
+.w-full {
+  width: 100%;
+}
+
+// ── Overflow utilities ─────────────────────────────────────────────────────────
+.overflow-x-auto {
+  overflow-x: auto;
+}
+
+// ── Justify-content utilities ──────────────────────────────────────────────────
 .justify {
   &-center {
     justify-content: center;
@@ -74,16 +90,18 @@ body {
     justify-content: space-between;
   }
   &-end {
-    justify-content: end;
+    justify-content: flex-end;
   }
 }
 
+// ── Align-items utilities ──────────────────────────────────────────────────────
 .items {
   &-center {
     align-items: center;
   }
 }
 
+// ── Gap utilities ──────────────────────────────────────────────────────────────
 .gap {
   &-025 {
     gap: 0.25rem;
@@ -94,4 +112,12 @@ body {
   &-1 {
     gap: 1rem;
   }
+  &-1 {
+    gap: 1rem;
+  }
+}
+
+// Numeric gap shorthands used in templates
+.gap-1 {
+  gap: 0.25rem;
 }

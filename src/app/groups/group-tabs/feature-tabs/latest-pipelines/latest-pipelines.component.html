@@ -1,11 +1,11 @@
-<div class="flex flex-col gap-2 w-full">
+<div class="flex flex-col gap-1 w-full">
 
   <!-- FILTER BY ROW -->
-  <div class="filter-by-container flex items-center gap-3">
-    <span class="filter-label text-sm font-semibold text-gray-600 whitespace-nowrap">
+  <div class="filter-by-container flex items-center gap-050">
+    <span class="filter-label font-sm">
       Filter by
     </span>
-    <div class="flex flex-nowrap items-center gap-2 overflow-x-auto pb-1">
+    <div class="flex flex-nowrap items-center gap-050 overflow-x-auto">
       <gcd-job-filter
         [loading]="loading()"
         [jobs]="jobs()"
@@ -18,7 +18,7 @@
   <div class="flex justify-between items-center w-full">
 
     <!-- LEFT SIDE FILTERS -->
-    <div class="flex flex-nowrap gap-3 items-center overflow-x-auto">
+    <div class="flex flex-nowrap gap-050 items-center overflow-x-auto">
 
       <!-- PROJECT FILTER -->
       <gcd-project-filter

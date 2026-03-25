@@ -15,12 +15,13 @@
     </div>
   </div>
   <nz-table
-    #nzTable
     [nzScroll]="{ y: '210px' }"
     nzSize="small"
     [nzData]="filteredBranches()"
     [nzLoading]="loading()"
-    [nzPageSize]="10"
+    [nzPageSize]="pageSize"
+    [nzPageIndex]="pageIndex()"
+    (nzPageIndexChange)="pageIndex.set($event)"
   >
     <thead>
       <tr>
@@ -34,7 +35,7 @@
       </tr>
     </thead>
     <tbody>
-      @for (data of nzTable.data; track trackByBranchCommitId(data)) {
+      @for (data of displayedBranches(); track trackByBranchCommitId(data)) {
       <tr [attr.data-pipeline-id]="data.pipeline?.id">
         <td>{{ data.branch.name }}</td>
         <td [style.color]="data.pipeline?.coverage | coverageColor">

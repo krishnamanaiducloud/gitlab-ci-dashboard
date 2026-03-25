@@ -1,10 +1,11 @@
 <nz-table
-  #nzTable
   [nzScroll]="{ y: '210px' }"
   nzSize="small"
   [nzData]="pipelines()"
   [nzLoading]="loading()"
-  [nzPageSize]="10"
+  [nzPageSize]="pageSize"
+  [nzPageIndex]="pageIndex()"
+  (nzPageIndexChange)="pageIndex.set($event)"
 >
   <thead>
     <tr>
@@ -18,7 +19,7 @@
     </tr>
   </thead>
   <tbody>
-    @for (pipeline of nzTable.data; track trackById(pipeline)) {
+    @for (pipeline of displayedPipelines(); track trackById(pipeline)) {
     <tr [attr.data-pipeline-id]="pipeline.id">
       <td>{{ pipeline.ref || '' }}</td>
       <td [style.color]="pipeline?.coverage | coverageColor">

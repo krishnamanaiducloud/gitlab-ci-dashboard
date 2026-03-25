@@ -7,7 +7,7 @@ import { statusToScope } from '$groups/util/status-scope'
 import { Header } from '$groups/util/table'
 import { ConfigService } from '$service/config.service'
 import { CommonModule } from '@angular/common'
-import { ChangeDetectionStrategy, Component, computed, inject, input, model, Signal } from '@angular/core'
+import { ChangeDetectionStrategy, Component, computed, inject, input, model, signal } from '@angular/core'
 import { NzBadgeModule } from 'ng-zorro-antd/badge'
 import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzI18nService } from 'ng-zorro-antd/i18n'
@@ -83,11 +83,17 @@ export class PipelineTableComponent {
   projectPipelines = input.required<ProjectPipeline[]>()
   pinnedPipelines = model.required<PipelineId[]>()
 
+  pageIndex = signal(1)
+  readonly pageSize = 12
+
+  displayedPipelines = computed(() => {
+    const start = (this.pageIndex() - 1) * this.pageSize
+    return this.projectPipelines().slice(start, start + this.pageSize)
+  })
+
   headers: Header<ProjectPipeline>[] = headers
 
-  get showWriteActions(): Signal<boolean> {
-    return computed(() => !this.config.hideWriteActions())
-  }
+  showWriteActions = computed(() => !this.config.hideWriteActions())
 
   get locale(): string {
     const { locale } = this.i18n.getLocale()

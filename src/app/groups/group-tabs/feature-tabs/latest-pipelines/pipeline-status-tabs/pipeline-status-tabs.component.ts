@@ -56,7 +56,7 @@ export class PipelineStatusTabsComponent {
           project.default_branch.toLowerCase().includes(this.filterBranch().toLowerCase())
         )
         .filter(({ pipeline }) =>
-          pipeline?.source?.toLowerCase().includes(this.filterTrigger().toLowerCase())
+          (pipeline?.source?.toLowerCase() ?? '').includes(this.filterTrigger().toLowerCase())
         )
         .filter(({ project }) =>
           filterProject(project, this.filterText(), this.filterTopics())

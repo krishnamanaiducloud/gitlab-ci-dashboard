@@ -20,7 +20,6 @@ import {
   inject,
   input,
   OnDestroy,
-  Signal,
   signal
 } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
@@ -102,6 +101,13 @@ export class PipelineTableComponent implements OnDestroy {
   status = input<Status>()
 
   selectedProjectId = signal<number | undefined>(undefined)
+  pageIndex = signal(1)
+  readonly pageSize = 10
+
+  displayedProjects = computed(() => {
+    const start = (this.pageIndex() - 1) * this.pageSize
+    return this.projects().slice(start, start + this.pageSize)
+  })
 
   headers: Header<ProjectPipeline>[] = headers
   branchPipelines = signal<BranchPipeline[]>([])
@@ -111,9 +117,7 @@ export class PipelineTableComponent implements OnDestroy {
     this.refreshSubscription?.unsubscribe()
   }
 
-  get showWriteActions(): Signal<boolean> {
-    return computed(() => !this.config.hideWriteActions())
-  }
+  showWriteActions = computed(() => !this.config.hideWriteActions())
 
   get locale(): string {
     const { locale } = this.i18n.getLocale()

@@ -1,12 +1,13 @@
-FROM node:24.11.1-alpine AS fe
+# 1) Frontend build (Angular)
+FROM node:25.8.1-alpine3.23 AS fe
 WORKDIR /builder
 COPY package*.json ./
 RUN npm ci --legacy-peer-deps --ignore-scripts
 COPY . .
 RUN npm run build
 
-# 2) Backend build (Rust API)
-FROM rust:alpine3.22 AS be
+# 2) Backend build (Rust API — musl/static)
+FROM rust:alpine3.23 AS be
 WORKDIR /builder
 RUN apk add --no-cache \
     build-base \
@@ -17,20 +18,20 @@ COPY api ./api
 WORKDIR /builder/api
 RUN cargo build --release
 
-# 3) Runtime image (Alpine, non-root, OpenShift-friendly)
-FROM docker.io/mohankrishna999/alpine:3.23.0
-RUN apk add --no-cache \
-    ca-certificates \
-    tzdata
-RUN addgroup -S app && adduser -S -G app app
+# 3) Extract CA certs + tzdata for distroless
+FROM alpine:3.23.3 AS certs
+RUN apk add --no-cache ca-certificates tzdata
+
+# 4) Runtime image (distroless, non-root, OpenShift-friendly)
+FROM gcr.io/distroless/static-debian12:nonroot
 WORKDIR /app
-ARG VERSION_ARG=0.0.1
+ARG VERSION_ARG=0.0.3
 ENV VERSION=${VERSION_ARG}
 ENV RUST_LOG=info
-COPY --from=fe /builder/dist/gitlab-ci-dashboard/browser ./spa
-COPY --from=be /builder/api/target/release/gcd_api ./gcd_api
-RUN chown -R app:app /app
-USER app
+COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=certs /usr/share/zoneinfo /usr/share/zoneinfo
+COPY --chown=65532:65532 --from=fe /builder/dist/gitlab-ci-dashboard/browser ./spa
+COPY --chown=65532:65532 --from=be /builder/api/target/release/gcd_api ./gcd_api
 EXPOSE 8080
 ENTRYPOINT ["/app/gcd_api"]
 

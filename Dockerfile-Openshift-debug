@@ -18,19 +18,27 @@ COPY api ./api
 WORKDIR /builder/api
 RUN cargo build --release
 
-# 3) Extract CA certs + tzdata for distroless
-FROM alpine:3.23.3 AS certs
-RUN apk add --no-cache ca-certificates tzdata
-
-# 4) Runtime image (distroless/static)
-FROM gcr.io/distroless/static:latest
+# 3) Runtime image (Alpine + debug tools, non-root, OpenShift-friendly)
+FROM alpine:3.23.3
+RUN apk add --no-cache \
+    ca-certificates \
+    tzdata \
+    bash \
+    curl \
+    wget \
+    procps \
+    net-tools \
+    bind-tools \
+    strace \
+    lsof
+RUN addgroup -S app && adduser -S -G app app
 WORKDIR /app
-ARG VERSION_ARG
+ARG VERSION_ARG=0.0.3
 ENV VERSION=${VERSION_ARG}
-ENV RUST_LOG=info
-COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=certs /usr/share/zoneinfo /usr/share/zoneinfo
+ENV RUST_LOG=debug
 COPY --from=fe /builder/dist/gitlab-ci-dashboard/browser ./spa
 COPY --from=be /builder/api/target/release/gcd_api ./gcd_api
+RUN chown -R app:app /app
+USER app
 EXPOSE 8080
 ENTRYPOINT ["/app/gcd_api"]

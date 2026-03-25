@@ -11,23 +11,21 @@
       [nzSelectedIndex]="selectedIndex()"
       (nzSelectChange)="onChange($event)"
     >
-      @for (group of groups(); track trackById(group)) {
-        <nz-tab [nzTitle]="title">
-          <ng-template #title>
-            <span
-              class="pointer"
-              [attr.data-group-id]="group.id"
-              nz-tooltip
-              [nzTooltipTitle]="group.name"
-              [nzTooltipMouseEnterDelay]="1"
-              >{{ group.name | maxLength: 25 }}</span
-            >
-          </ng-template>
-          @if (selectedGroupId() == group.id) {
-            <gcd-feature-tabs [groupMap]="getGroupMap(group)" />
-          }
-        </nz-tab>
-      }
+      <nz-tab *ngFor="let group of groups()" [nzTitle]="title">
+        <ng-template #title>
+          <span
+            class="pointer"
+            [attr.data-group-id]="group.id"
+            nz-tooltip
+            [nzTooltipTitle]="group.name"
+            [nzTooltipMouseEnterDelay]="1"
+            >{{ group.name | maxLength: 25 }}</span
+          >
+        </ng-template>
+        @if (selectedGroupId() == group.id) {
+          <gcd-feature-tabs [groupMap]="getGroupMap(group)" />
+        }
+      </nz-tab>
     </nz-tabset>
     <ng-template #favorites>
       <button nz-button nzType="text" (click)="toggleFavorites()">

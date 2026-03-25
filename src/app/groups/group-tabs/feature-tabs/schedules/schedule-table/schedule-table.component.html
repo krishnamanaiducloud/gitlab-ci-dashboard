@@ -1,4 +1,4 @@
-<nz-table nzSize="small" nzTableLayout="fixed" [nzData]="schedulePipelines()" [nzPageSize]="pageSize" [nzPageIndex]="pageIndex()" (nzPageIndexChange)="pageIndex.set($event)">
+<nz-table #nzTable nzSize="small" nzTableLayout="fixed" [nzData]="schedulePipelines()" [nzPageSize]="10">
   <thead>
     <tr>
       @for (header of headers; track header.title) {
@@ -11,7 +11,7 @@
     </tr>
   </thead>
   <tbody>
-    @for (data of displayedSchedules(); track trackByScheduleId(data)) {
+    @for (data of nzTable.data; track trackByScheduleId(data)) {
     <tr
       class="pointer"
       nz-tooltip

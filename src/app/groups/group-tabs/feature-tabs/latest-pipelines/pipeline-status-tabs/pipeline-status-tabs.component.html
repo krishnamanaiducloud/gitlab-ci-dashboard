@@ -1,20 +1,24 @@
 @if (tabs().length) {
-  <nz-tabset nzType="card" [nzDestroyInactiveTabPane]="true">
-    <nz-tab *ngFor="let tab of tabs()" [nzTitle]="title">
-      <ng-template #title>
-        <div class="flex gap-025">
-          <span class="status">{{ tab.status }}</span>
-          <nz-badge
-            nzStandalone
-            nzSize="small"
-            [nzCount]="tab.projects.length"
-            [nzStyle]="{ backgroundColor: tab.status | statusColor }"
-          ></nz-badge>
-        </div>
-      </ng-template>
-      <gcd-pipeline-table [projects]="tab.projects" [status]="tab.status" />
-    </nz-tab>
-  </nz-tabset>
+  <nz-tabs nzType="card">
+    @for (tab of tabs(); track trackByStatus(tab)) {
+      <nz-tab [nzTitle]="title">
+        <ng-template #title>
+          <div class="flex gap-025">
+            <span class="status">{{ tab.status }}</span>
+            <nz-badge
+              nzStandalone
+              nzSize="small"
+              [nzCount]="tab.projects.length"
+              [nzStyle]="{ backgroundColor: tab.status | statusColor }"
+            ></nz-badge>
+          </div>
+        </ng-template>
+        <ng-template nz-tab>
+          <gcd-pipeline-table [projects]="tab.projects" [status]="tab.status" />
+        </ng-template>
+      </nz-tab>
+    }
+  </nz-tabs>
 } @else {
   <gcd-pipeline-table [projects]="[]" />
 }

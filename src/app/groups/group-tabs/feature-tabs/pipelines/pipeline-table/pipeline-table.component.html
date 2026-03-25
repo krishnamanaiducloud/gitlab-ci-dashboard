@@ -1,4 +1,4 @@
-<nz-table nzSize="small" nzTableLayout="fixed" [nzData]="projectPipelines()" [nzPageSize]="pageSize" [nzPageIndex]="pageIndex()" (nzPageIndexChange)="pageIndex.set($event)">
+<nz-table #nzTable nzSize="small" nzTableLayout="fixed" [nzData]="projectPipelines()" [nzPageSize]="12">
   <thead>
     <tr>
       @for (header of headers; track header.title) {
@@ -11,7 +11,7 @@
     </tr>
   </thead>
   <tbody>
-    @for (data of displayedPipelines(); track trackBy($index, data)) {
+    @for (data of nzTable.data; track trackBy($index, data)) {
       <tr
         [attr.data-project-id]="data.project.id"
         [attr.data-pipeline-id]="data.pipeline?.id"

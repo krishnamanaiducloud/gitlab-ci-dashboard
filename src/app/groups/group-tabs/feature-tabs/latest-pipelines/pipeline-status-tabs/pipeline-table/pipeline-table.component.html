@@ -1,4 +1,4 @@
-<nz-table nzSize="small" nzTableLayout="fixed" [nzData]="projects()" [nzPageSize]="pageSize" [nzPageIndex]="pageIndex()" (nzPageIndexChange)="pageIndex.set($event)">
+<nz-table #nzTable nzSize="small" nzTableLayout="fixed" [nzData]="projects()" [nzPageSize]="10">
   <thead>
     <tr>
       @for (header of headers; track header.title) {
@@ -11,7 +11,7 @@
     </tr>
   </thead>
   <tbody>
-    @for (data of displayedProjects(); track trackByProjectId(data)) {
+    @for (data of nzTable.data; track trackByProjectId(data)) {
     <tr
       class="pointer"
       [attr.data-project-id]="data.project.id"

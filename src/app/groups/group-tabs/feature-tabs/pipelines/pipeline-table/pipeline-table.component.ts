@@ -7,7 +7,7 @@ import { statusToScope } from '$groups/util/status-scope'
 import { Header } from '$groups/util/table'
 import { ConfigService } from '$service/config.service'
 import { CommonModule } from '@angular/common'
-import { ChangeDetectionStrategy, Component, computed, inject, input, model, signal } from '@angular/core'
+import { ChangeDetectionStrategy, Component, computed, inject, input, model, Signal, signal } from '@angular/core'
 import { NzBadgeModule } from 'ng-zorro-antd/badge'
 import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzI18nService } from 'ng-zorro-antd/i18n'
@@ -15,7 +15,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzSpinModule } from 'ng-zorro-antd/spin'
 import { NzTableModule } from 'ng-zorro-antd/table'
 import { NzTagModule } from 'ng-zorro-antd/tag'
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip'
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip'
 import { DownloadArtifactsIconComponent } from '../../components/download-artifacts-icon/download-artifacts-icon.component'
 import { JobsComponent } from '../../components/jobs/jobs.component'
 import { OpenGitlabIconComponent } from '../../components/open-gitlab-icon/open-gitlab-icon.component'
@@ -59,7 +59,7 @@ const semverRegex =
   imports: [
     CommonModule,
     NzTableModule,
-    NzToolTipModule,
+    NzTooltipModule,
     NzButtonModule,
     NzBadgeModule,
     NzIconModule,
@@ -83,17 +83,11 @@ export class PipelineTableComponent {
   projectPipelines = input.required<ProjectPipeline[]>()
   pinnedPipelines = model.required<PipelineId[]>()
 
-  pageIndex = signal(1)
-  readonly pageSize = 12
-
-  displayedPipelines = computed(() => {
-    const start = (this.pageIndex() - 1) * this.pageSize
-    return this.projectPipelines().slice(start, start + this.pageSize)
-  })
-
   headers: Header<ProjectPipeline>[] = headers
 
-  showWriteActions = computed(() => !this.config.hideWriteActions())
+  get showWriteActions(): Signal<boolean> {
+    return computed(() => !this.config.hideWriteActions())
+  }
 
   get locale(): string {
     const { locale } = this.i18n.getLocale()

@@ -10,13 +10,13 @@ import { statusToScope } from '$groups/util/status-scope'
 import { Header } from '$groups/util/table'
 import { ConfigService } from '$service/config.service'
 import { CommonModule } from '@angular/common'
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core'
+import { ChangeDetectionStrategy, Component, computed, inject, input, Signal, signal } from '@angular/core'
 import { NzBadgeModule } from 'ng-zorro-antd/badge'
 import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzI18nService } from 'ng-zorro-antd/i18n'
 import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzTableModule } from 'ng-zorro-antd/table'
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip'
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip'
 import { CoverageColorPipe } from '../../../pipes/coverage-color.pipe'
 
 const headers: Header<Pipeline>[] = [
@@ -52,7 +52,7 @@ const headers: Header<Pipeline>[] = [
   imports: [
     CommonModule,
     NzTableModule,
-    NzToolTipModule,
+    NzTooltipModule,
     NzButtonModule,
     NzIconModule,
     NzBadgeModule,
@@ -74,17 +74,11 @@ export class SchedulePipelineTableComponent {
   pipelines = input.required<Pipeline[]>()
   loading = input.required<boolean>()
 
-  pageIndex = signal(1)
-  readonly pageSize = 10
-
-  displayedPipelines = computed(() => {
-    const start = (this.pageIndex() - 1) * this.pageSize
-    return this.pipelines().slice(start, start + this.pageSize)
-  })
-
   headers: Header<Pipeline>[] = headers
 
-  showWriteActions = computed(() => !this.config.hideWriteActions())
+  get showWriteActions(): Signal<boolean> {
+    return computed(() => !this.config.hideWriteActions())
+  }
 
   get locale(): string {
     const { locale } = this.i18n.getLocale()

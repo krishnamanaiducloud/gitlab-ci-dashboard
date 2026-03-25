@@ -18,6 +18,7 @@ import {
   inject,
   input,
   OnDestroy,
+  Signal,
   signal
 } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
@@ -26,7 +27,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzI18nService } from 'ng-zorro-antd/i18n'
 import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzTableModule } from 'ng-zorro-antd/table'
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip'
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip'
 import { finalize, interval, map, Subscription, switchMap } from 'rxjs'
 import { DownloadArtifactsIconComponent } from '../../components/download-artifacts-icon/download-artifacts-icon.component'
 import { JobsComponent } from '../../components/jobs/jobs.component'
@@ -82,7 +83,7 @@ const headers: Header<ScheduleProjectPipeline>[] = [
   imports: [
     CommonModule,
     NzTableModule,
-    NzToolTipModule,
+    NzTooltipModule,
     NzButtonModule,
     NzIconModule,
     NzBadgeModule,
@@ -114,21 +115,15 @@ export class ScheduleTableComponent implements OnDestroy {
   pipelines = signal<Pipeline[]>([])
   loading = signal(false)
 
-  pageIndex = signal(1)
-  readonly pageSize = 10
-
-  displayedSchedules = computed(() => {
-    const start = (this.pageIndex() - 1) * this.pageSize
-    return this.schedulePipelines().slice(start, start + this.pageSize)
-  })
-
   headers: Header<ScheduleProjectPipeline>[] = headers
 
   ngOnDestroy(): void {
     this.refreshSubscription?.unsubscribe()
   }
 
-  showWriteActions = computed(() => !this.config.hideWriteActions())
+  get showWriteActions(): Signal<boolean> {
+    return computed(() => !this.config.hideWriteActions())
+  }
 
   get locale(): string {
     const { locale } = this.i18n.getLocale()

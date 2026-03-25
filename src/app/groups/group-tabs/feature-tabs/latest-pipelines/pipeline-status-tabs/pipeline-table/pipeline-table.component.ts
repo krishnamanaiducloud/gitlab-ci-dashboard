@@ -20,6 +20,7 @@ import {
   inject,
   input,
   OnDestroy,
+  Signal,
   signal
 } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
@@ -28,7 +29,7 @@ import { NzI18nService } from 'ng-zorro-antd/i18n'
 import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzSpinModule } from 'ng-zorro-antd/spin'
 import { NzTableModule } from 'ng-zorro-antd/table'
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip'
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip'
 import { finalize, interval, Subscription, switchMap } from 'rxjs'
 import { OpenGitlabIconComponent } from '../../../components/open-gitlab-icon/open-gitlab-icon.component'
 import { LatestPipelineService } from '../../service/latest-pipeline.service'
@@ -73,7 +74,7 @@ const headers: Header<ProjectPipeline>[] = [
   imports: [
     CommonModule,
     NzTableModule,
-    NzToolTipModule,
+    NzTooltipModule,
     NzButtonModule,
     NzIconModule,
     NzSpinModule,
@@ -101,13 +102,6 @@ export class PipelineTableComponent implements OnDestroy {
   status = input<Status>()
 
   selectedProjectId = signal<number | undefined>(undefined)
-  pageIndex = signal(1)
-  readonly pageSize = 10
-
-  displayedProjects = computed(() => {
-    const start = (this.pageIndex() - 1) * this.pageSize
-    return this.projects().slice(start, start + this.pageSize)
-  })
 
   headers: Header<ProjectPipeline>[] = headers
   branchPipelines = signal<BranchPipeline[]>([])
@@ -117,7 +111,9 @@ export class PipelineTableComponent implements OnDestroy {
     this.refreshSubscription?.unsubscribe()
   }
 
-  showWriteActions = computed(() => !this.config.hideWriteActions())
+  get showWriteActions(): Signal<boolean> {
+    return computed(() => !this.config.hideWriteActions())
+  }
 
   get locale(): string {
     const { locale } = this.i18n.getLocale()

@@ -16,7 +16,6 @@ interface Tab {
 
 @Component({
   selector: 'gcd-pipeline-status-tabs',
-  standalone: true,
   imports: [
     CommonModule,
     NzTabsModule,
@@ -26,7 +25,7 @@ interface Tab {
     StatusColorPipe
   ],
   templateUrl: './pipeline-status-tabs.component.html',
-  styleUrls: ['./pipeline-status-tabs.component.scss'],
+  styleUrl: './pipeline-status-tabs.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PipelineStatusTabsComponent {

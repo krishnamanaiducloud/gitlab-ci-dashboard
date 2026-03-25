@@ -30,7 +30,7 @@ const STORAGE_KEY = 'pinned_pipelines'
     PipelineTableComponent
   ],
   templateUrl: './pipelines.component.html',
-  styleUrls: ['./pipelines.component.scss'],
+  styleUrl: './pipelines.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PipelinesComponent implements OnInit {
@@ -112,18 +112,6 @@ export class PipelinesComponent implements OnInit {
       .subscribe(p => this.projectPipelines.set(p))
   }
 
-  onFilterTopicsChanged(v: string[]) { this.filterTopics.set(v) }
-  onFilterTextProjectsChanged(v: string) { this.filterTextProject.set(v) }
-  onFilterGroupChanged(v: string) { this.filterGroup.set(v) }
-  onFilterTextBranchesChanged(v: string) { this.filterTextBranch.set(v) }
-  onFilterTriggerChanged(v: string) { this.filterTrigger.set(v) }
-  onFilterStatusChanged(v: string) { this.filterStatus.set(v) }
-
-  onPinnedPipelinesChanged(pinned: PipelineId[]) {
-    this.pinnedPipelines.set(pinned)
-    this.savePinnedPipelines(pinned)
-  }
-
   exportCsv() {
     const rows = this.filteredProjectPipelines().map(p => ({
       project: p.project.name,
@@ -152,10 +140,6 @@ export class PipelinesComponent implements OnInit {
     URL.revokeObjectURL(url)
   }
 
-  private savePinnedPipelines(v: PipelineId[]) {
-    try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(v)) } catch {}
-  }
-
   private getPinnedPipelines(): PipelineId[] {
     try {
       const item = sessionStorage.getItem(STORAGE_KEY)
@@ -166,9 +150,9 @@ export class PipelinesComponent implements OnInit {
   }
 
   private sortByUpdatedAt(a: ProjectPipeline, b: ProjectPipeline) {
-    const aTime = a.pipeline ? new Date(a.pipeline.updated_at).getTime() : 0;
-    const bTime = b.pipeline ? new Date(b.pipeline.updated_at).getTime() : 0;
-    return bTime - aTime;
+    const aTime = a.pipeline ? new Date(a.pipeline.updated_at).getTime() : 0
+    const bTime = b.pipeline ? new Date(b.pipeline.updated_at).getTime() : 0
+    return bTime - aTime
   }
 
   private sortPinned(a: ProjectPipeline, b: ProjectPipeline, pinned: number[]) {
@@ -177,4 +161,3 @@ export class PipelinesComponent implements OnInit {
     return aPinned === bPinned ? 0 : aPinned ? -1 : 1
   }
 }
-

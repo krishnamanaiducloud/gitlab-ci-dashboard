@@ -13,7 +13,7 @@ import { finalize, retry } from 'rxjs'
   selector: 'gcd-cancel-pipeline-action',
   imports: [CommonModule, NzIconModule, NzButtonModule],
   templateUrl: './cancel-pipeline-action.component.html',
-  styleUrls: ['./cancel-pipeline-action.component.scss'],
+  styleUrl: './cancel-pipeline-action.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CancelPipelineActionComponent {

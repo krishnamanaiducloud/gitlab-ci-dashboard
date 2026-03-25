@@ -15,7 +15,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzSpinModule } from 'ng-zorro-antd/spin'
 import { NzTableModule } from 'ng-zorro-antd/table'
 import { NzTagModule } from 'ng-zorro-antd/tag'
-import { NzTooltipModule } from 'ng-zorro-antd/tooltip'
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip'
 import { DownloadArtifactsIconComponent } from '../../components/download-artifacts-icon/download-artifacts-icon.component'
 import { JobsComponent } from '../../components/jobs/jobs.component'
 import { OpenGitlabIconComponent } from '../../components/open-gitlab-icon/open-gitlab-icon.component'
@@ -59,7 +59,7 @@ const semverRegex =
   imports: [
     CommonModule,
     NzTableModule,
-    NzTooltipModule,
+    NzToolTipModule,
     NzButtonModule,
     NzBadgeModule,
     NzIconModule,
@@ -73,7 +73,7 @@ const semverRegex =
     OpenGitlabIconComponent
   ],
   templateUrl: './pipeline-table.component.html',
-  styleUrls: ['./pipeline-table.component.scss'],
+  styleUrl: './pipeline-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PipelineTableComponent {

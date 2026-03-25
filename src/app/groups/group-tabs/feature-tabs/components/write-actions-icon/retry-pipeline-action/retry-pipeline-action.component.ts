@@ -13,7 +13,7 @@ import { finalize, retry } from 'rxjs'
   selector: 'gcd-retry-pipeline-action',
   imports: [CommonModule, NzIconModule, NzButtonModule],
   templateUrl: './retry-pipeline-action.component.html',
-  styleUrls: ['./retry-pipeline-action.component.scss'],
+  styleUrl: './retry-pipeline-action.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RetryPipelineActionComponent {

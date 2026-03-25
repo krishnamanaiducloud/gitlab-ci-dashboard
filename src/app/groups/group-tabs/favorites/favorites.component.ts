@@ -20,7 +20,7 @@ import { NzEmptyModule } from 'ng-zorro-antd/empty'
     FeatureTabsComponent
   ],
   templateUrl: './favorites.component.html',
-  styleUrls: ['./favorites.component.scss'],
+  styleUrl: './favorites.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FavoritesComponent {

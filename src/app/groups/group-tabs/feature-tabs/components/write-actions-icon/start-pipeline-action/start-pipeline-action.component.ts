@@ -10,7 +10,7 @@ import { ModalData, StartPipelineModalComponent } from './start-pipeline-modal/s
   selector: 'gcd-start-pipeline-action',
   imports: [CommonModule, NzIconModule, NzButtonModule, NzModalModule],
   templateUrl: './start-pipeline-action.component.html',
-  styleUrls: ['./start-pipeline-action.component.scss'],
+  styleUrl: './start-pipeline-action.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StartPipelineActionComponent {

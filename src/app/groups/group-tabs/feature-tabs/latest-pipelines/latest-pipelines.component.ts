@@ -25,7 +25,6 @@ import { TextFilterComponent } from '../components/text-filter/text-filter.compo
 
 @Component({
   selector: 'gcd-latest-pipelines',
-  standalone: true,
   imports: [
     CommonModule,
     NzSpinModule,
@@ -36,7 +35,7 @@ import { TextFilterComponent } from '../components/text-filter/text-filter.compo
     TextFilterComponent
   ],
   templateUrl: './latest-pipelines.component.html',
-  styleUrls: ['./latest-pipelines.component.scss'],
+  styleUrl: './latest-pipelines.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LatestPipelinesComponent implements OnInit {

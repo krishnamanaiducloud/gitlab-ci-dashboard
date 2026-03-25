@@ -4,13 +4,13 @@ import { FormsModule } from '@angular/forms'
 import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzInputModule } from 'ng-zorro-antd/input'
-import { NzTooltipModule } from 'ng-zorro-antd/tooltip'
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip'
 
 @Component({
   selector: 'gcd-latest-branch-filter',
-  imports: [NzIconModule, NzInputModule, NzButtonModule, NzTooltipModule, FormsModule],
+  imports: [NzIconModule, NzInputModule, NzButtonModule, NzToolTipModule, FormsModule],
   templateUrl: './latest-branch-filter.component.html',
-  styleUrls: ['./latest-branch-filter.component.scss'],
+  styleUrl: './latest-branch-filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LatestBranchFilterComponent {

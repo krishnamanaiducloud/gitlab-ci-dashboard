@@ -1,30 +1,22 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
+import { ChangeDetectionStrategy, Component, model } from '@angular/core'
+import { FormsModule } from '@angular/forms'
+import { NzButtonModule } from 'ng-zorro-antd/button'
+import { NzIconModule } from 'ng-zorro-antd/icon'
+import { NzInputModule } from 'ng-zorro-antd/input'
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip'
 
 @Component({
   selector: 'gcd-text-filter',
-  standalone: true,
-  imports: [CommonModule, FormsModule, NzInputModule, NzIconModule, NzTooltipModule],
+  imports: [FormsModule, NzInputModule, NzIconModule, NzToolTipModule, NzButtonModule],
   templateUrl: './text-filter.component.html',
-  styleUrls: ['./text-filter.component.scss'],
+  styleUrl: './text-filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TextFilterComponent {
-  @Input() placeholder = '';
-  @Input() filterText = '';
-  @Output() filterTextChange = new EventEmitter<string>();
-
-  update(value: string): void {
-    this.filterText = value;
-    this.filterTextChange.emit(value);
-  }
+  placeholder = model('')
+  filterText = model.required<string>()
 
   clear(): void {
-    this.update('');
+    this.filterText.set('')
   }
 }
-

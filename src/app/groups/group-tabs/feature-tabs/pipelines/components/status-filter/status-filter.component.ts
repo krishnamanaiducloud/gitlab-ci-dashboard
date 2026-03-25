@@ -10,7 +10,7 @@ import { NzTagModule } from 'ng-zorro-antd/tag'
   selector: 'gcd-status-filter',
   imports: [FormsModule, NzTagModule, NzSelectModule, StatusColorPipe],
   templateUrl: './status-filter.component.html',
-  styleUrls: ['./status-filter.component.scss'],
+  styleUrl: './status-filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StatusFilterComponent {

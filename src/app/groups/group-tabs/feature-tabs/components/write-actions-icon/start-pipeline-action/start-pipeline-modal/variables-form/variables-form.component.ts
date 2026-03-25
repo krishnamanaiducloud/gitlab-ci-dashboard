@@ -15,7 +15,7 @@ type Variable = { key: string; value: string }
   selector: 'gcd-variables-form',
   imports: [CommonModule, NzButtonModule, NzIconModule, NzFormModule, ReactiveFormsModule],
   templateUrl: './variables-form.component.html',
-  styleUrls: ['./variables-form.component.scss']
+  styleUrl: './variables-form.component.scss'
 })
 export class VariablesFormComponent implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder)

@@ -36,7 +36,7 @@ export interface ModalData {
     FormsModule
   ],
   templateUrl: './start-pipeline-modal.component.html',
-  styleUrls: ['./start-pipeline-modal.component.scss']
+  styleUrl: './start-pipeline-modal.component.scss'
 })
 export class StartPipelineModalComponent {
   private modal = inject(NzModalRef)

@@ -1,25 +1,20 @@
 <div class="flex flex-col gap-2 w-full">
 
-  <!-- FILTER BY ROW : FIXED ALIGNMENT -->
+  <!-- FILTER BY ROW -->
   <div class="filter-by-container flex items-center gap-3">
-
     <span class="filter-label text-sm font-semibold text-gray-600 whitespace-nowrap">
       Filter by
     </span>
-
-    <!-- FAILED JOB CHIPS / TAGS ROW (overflow scroll kept) -->
     <div class="flex flex-nowrap items-center gap-2 overflow-x-auto pb-1">
       <gcd-job-filter
         [loading]="loading()"
         [jobs]="jobs()"
-        [filterJobs]="filterJobs()"
-        (filterJobsChange)="onFilterJobsChanged($event)"
+        [(filterJobs)]="filterJobs"
       ></gcd-job-filter>
     </div>
   </div>
 
-
-  <!-- TOP FILTER ROW (LEFT FILTERS + RIGHT CSV BUTTON) -->
+  <!-- TOP FILTER ROW -->
   <div class="flex justify-between items-center w-full">
 
     <!-- LEFT SIDE FILTERS -->
@@ -28,37 +23,32 @@
       <!-- PROJECT FILTER -->
       <gcd-project-filter
         [projects]="projects()"
-        [filterText]="filterProject()"
-        (filterTextChange)="onFilterProjectChanged($event)"
+        [(filterText)]="filterProject"
       ></gcd-project-filter>
 
       <!-- GROUP FILTER -->
       <gcd-text-filter
-        [filterText]="filterGroup()"
-        placeholder="Search groups..."
-        (filterTextChange)="onFilterGroupChanged($event)"
+        [(filterText)]="filterGroup"
+        [placeholder]="'Search groups...'"
       ></gcd-text-filter>
 
       <!-- BRANCH FILTER -->
       <gcd-text-filter
-        [filterText]="filterBranch()"
-        placeholder="Search branches..."
-        (filterTextChange)="onFilterBranchChanged($event)"
+        [(filterText)]="filterBranch"
+        [placeholder]="'Search branches...'"
       ></gcd-text-filter>
 
       <!-- TRIGGER FILTER -->
       <gcd-text-filter
-        [filterText]="filterTrigger()"
-        placeholder="Search triggers..."
-        (filterTextChange)="onFilterTriggerChanged($event)"
+        [(filterText)]="filterTrigger"
+        [placeholder]="'Search triggers...'"
       ></gcd-text-filter>
 
       <!-- TOPIC FILTER -->
       <gcd-topic-filter
         [loading]="loading()"
         [projects]="projects()"
-        [filterTopics]="filterTopics()"
-        (filterTopicsChange)="onFilterTopicsChanged($event)"
+        [(filterTopics)]="filterTopics"
       ></gcd-topic-filter>
 
     </div>
@@ -70,12 +60,10 @@
 
   </div>
 
-
   <!-- TABLE SECTION -->
   @if (loading()) {
     <nz-spin />
   } @else {
-
     <gcd-pipeline-status-tabs
       [projectPipelines]="projectPipelines()"
       [filterProject]="filterProject()"
@@ -85,10 +73,7 @@
       [filterTopics]="filterTopics()"
       [filterJobs]="filterJobs()"
       [filterText]="filterProject()"
-    >
-    </gcd-pipeline-status-tabs>
-
+    ></gcd-pipeline-status-tabs>
   }
 
 </div>
-

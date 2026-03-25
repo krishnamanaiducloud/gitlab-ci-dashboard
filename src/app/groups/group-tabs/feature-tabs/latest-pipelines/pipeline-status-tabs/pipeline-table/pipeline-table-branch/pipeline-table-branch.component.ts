@@ -19,7 +19,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzI18nService } from 'ng-zorro-antd/i18n'
 import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzTableModule } from 'ng-zorro-antd/table'
-import { NzTooltipModule } from 'ng-zorro-antd/tooltip'
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip'
 import { LatestBranchFilterComponent } from './latest-branch-filter/latest-branch-filter.component'
 
 const headers: Header<BranchPipeline>[] = [
@@ -54,7 +54,7 @@ const headers: Header<BranchPipeline>[] = [
     JobsComponent,
     StatusColorPipe,
     NzTableModule,
-    NzTooltipModule,
+    NzToolTipModule,
     NzButtonModule,
     NzIconModule,
     NzBadgeModule,
@@ -65,7 +65,7 @@ const headers: Header<BranchPipeline>[] = [
     CoverageColorPipe
   ],
   templateUrl: './pipeline-table-branch.component.html',
-  styleUrls: ['./pipeline-table-branch.component.scss'],
+  styleUrl: './pipeline-table-branch.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PipelineTableBranchComponent {

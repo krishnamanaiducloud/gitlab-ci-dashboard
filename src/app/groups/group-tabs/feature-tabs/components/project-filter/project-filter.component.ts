@@ -6,13 +6,13 @@ import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzInputModule } from 'ng-zorro-antd/input'
 import { NzSpinModule } from 'ng-zorro-antd/spin'
 import { NzTagModule } from 'ng-zorro-antd/tag'
-import { NzTooltipModule } from 'ng-zorro-antd/tooltip'
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip'
 
 @Component({
   selector: 'gcd-project-filter',
-  imports: [NzIconModule, NzInputModule, NzTagModule, NzButtonModule, NzTooltipModule, NzSpinModule, FormsModule],
+  imports: [NzIconModule, NzInputModule, NzTagModule, NzButtonModule, NzToolTipModule, NzSpinModule, FormsModule],
   templateUrl: './project-filter.component.html',
-  styleUrls: ['./project-filter.component.scss'],
+  styleUrl: './project-filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProjectFilterComponent {

@@ -6,7 +6,7 @@ import { ChangeDetectionStrategy, Component, computed, HostListener, inject, inp
 import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown'
 import { NzIconModule } from 'ng-zorro-antd/icon'
-import { NzTooltipModule } from 'ng-zorro-antd/tooltip'
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip'
 import { CancelPipelineActionComponent } from './cancel-pipeline-action/cancel-pipeline-action.component'
 import { RetryPipelineActionComponent } from './retry-pipeline-action/retry-pipeline-action.component'
 import { StartPipelineActionComponent } from './start-pipeline-action/start-pipeline-action.component'
@@ -18,13 +18,13 @@ import { StartPipelineActionComponent } from './start-pipeline-action/start-pipe
     NzButtonModule,
     NzIconModule,
     NzDropDownModule,
-    NzTooltipModule,
+    NzToolTipModule,
     StartPipelineActionComponent,
     CancelPipelineActionComponent,
     RetryPipelineActionComponent
   ],
   templateUrl: './write-actions-icon.component.html',
-  styleUrls: ['./write-actions-icon.component.scss'],
+  styleUrl: './write-actions-icon.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WriteActionsIconComponent {

@@ -1,4 +1,4 @@
-FROM node:24.11.1-alpine AS fe
+FROM node:25.8.2-alpine AS fe
 WORKDIR /builder
 COPY package*.json ./
 RUN npm ci --legacy-peer-deps --ignore-scripts
@@ -6,7 +6,7 @@ COPY . .
 RUN npm run build
 
 # 2) Backend build (Rust API)
-FROM rust:alpine3.22 AS be
+FROM rust:alpine3.23 AS be
 WORKDIR /builder
 RUN apk add --no-cache \
     build-base \
@@ -18,13 +18,13 @@ WORKDIR /builder/api
 RUN cargo build --release
 
 # 3) Runtime image (Alpine, non-root, OpenShift-friendly)
-FROM docker.io/mohankrishna999/alpine:3.23.0
+FROM alpine:3.23.3
 RUN apk add --no-cache \
     ca-certificates \
     tzdata
 RUN addgroup -S app && adduser -S -G app app
 WORKDIR /app
-ARG VERSION_ARG=0.0.1
+ARG VERSION_ARG=0.0.2
 ENV VERSION=${VERSION_ARG}
 ENV RUST_LOG=info
 COPY --from=fe /builder/dist/gitlab-ci-dashboard/browser ./spa

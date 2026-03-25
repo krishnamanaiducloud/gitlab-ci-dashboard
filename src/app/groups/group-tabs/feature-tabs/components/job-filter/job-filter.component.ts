@@ -9,7 +9,7 @@ import { NzTagModule } from 'ng-zorro-antd/tag'
   selector: 'gcd-job-filter',
   imports: [CommonModule, NzTagModule, NzSpinModule],
   templateUrl: './job-filter.component.html',
-  styleUrls: ['./job-filter.component.scss'],
+  styleUrl: './job-filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class JobFilterComponent {

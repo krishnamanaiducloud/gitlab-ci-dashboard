@@ -2,13 +2,13 @@ import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component, input } from '@angular/core'
 import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzIconModule } from 'ng-zorro-antd/icon'
-import { NzTooltipModule } from 'ng-zorro-antd/tooltip'
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip'
 
 @Component({
   selector: 'gcd-open-gitlab-icon',
-  imports: [CommonModule, NzButtonModule, NzIconModule, NzTooltipModule],
+  imports: [CommonModule, NzButtonModule, NzIconModule, NzToolTipModule],
   templateUrl: './open-gitlab-icon.component.html',
-  styleUrls: ['./open-gitlab-icon.component.scss'],
+  styleUrl: './open-gitlab-icon.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OpenGitlabIconComponent {

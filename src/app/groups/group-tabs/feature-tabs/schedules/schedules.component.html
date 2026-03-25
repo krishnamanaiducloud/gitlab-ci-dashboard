@@ -8,52 +8,45 @@
       <!-- PROJECT -->
       <gcd-project-filter
         [projects]="projects()"
-        [filterText]="filterText()"
-        (filterTextChange)="onFilterTextChanged($event)"
+        [(filterText)]="filterText"
       ></gcd-project-filter>
 
       <!-- GROUP -->
       <gcd-text-filter
-        [filterText]="filterGroup()"
-        placeholder="Search groups..."
-        (filterTextChange)="onFilterGroupChanged($event)"
+        [(filterText)]="filterGroup"
+        [placeholder]="'Search groups...'"
       ></gcd-text-filter>
 
       <!-- BRANCH -->
       <gcd-text-filter
-        [filterText]="filterBranch()"
-        placeholder="Search branches..."
-        (filterTextChange)="onFilterBranchChanged($event)"
+        [(filterText)]="filterBranch"
+        [placeholder]="'Search branches...'"
       ></gcd-text-filter>
 
       <!-- TRIGGER -->
       <gcd-text-filter
-        [filterText]="filterTrigger()"
-        placeholder="Search triggers..."
-        (filterTextChange)="onFilterTriggerChanged($event)"
+        [(filterText)]="filterTrigger"
+        [placeholder]="'Search triggers...'"
       ></gcd-text-filter>
 
       <!-- STATUS -->
       <gcd-text-filter
-        [filterText]="filterStatus()"
-        placeholder="Search status..."
-        (filterTextChange)="onFilterStatusChanged($event)"
+        [(filterText)]="filterStatus"
+        [placeholder]="'Search status...'"
       ></gcd-text-filter>
 
       <!-- TOPIC -->
       <gcd-topic-filter
         [loading]="loading()"
         [projects]="projects()"
-        [filterTopics]="filterTopics()"
-        (filterTopicsChange)="onFilterTopicsChanged($event)"
+        [(filterTopics)]="filterTopics"
       ></gcd-topic-filter>
 
       <!-- JOBS -->
       <gcd-job-filter
         [loading]="loading()"
         [jobs]="jobs()"
-        [filterJobs]="filterJobs()"
-        (filterJobsChange)="onFilterJobsChanged($event)"
+        [(filterJobs)]="filterJobs"
       ></gcd-job-filter>
 
     </div>
@@ -74,4 +67,3 @@
   }
 
 </div>
-

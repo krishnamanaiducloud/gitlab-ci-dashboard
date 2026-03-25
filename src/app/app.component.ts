@@ -10,29 +10,24 @@ import { HeaderComponent } from './header/header.component'
   selector: 'gcd-root',
   imports: [RouterOutlet, HeaderComponent, NzAlertModule, NzButtonModule],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrl: './app.component.scss'
 })
 export class AppComponent {
   errorService = inject(ErrorService)
 
   error = this.errorService.error
 
-  get title() {
-    return computed(() => {
-      const error = this.error()
-      if (!error) return ''
+  title = computed(() => {
+    const error = this.error()
+    if (!error) return ''
+    const { statusCode } = error
+    return `Error ${statusCode}`
+  })
 
-      const { statusCode } = error
-      return `Error ${statusCode}`
-    })
-  }
-
-  get message() {
-    return computed(() => {
-      const error = this.error()
-      return error ? error.message : ''
-    })
-  }
+  message = computed(() => {
+    const error = this.error()
+    return error ? error.message : ''
+  })
 
   onClick(): void {
     window.location.reload()
@@ -40,4 +35,3 @@ export class AppComponent {
 
   currentYear: number = new Date().getFullYear()
 }
-

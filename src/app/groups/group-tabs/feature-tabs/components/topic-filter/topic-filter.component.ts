@@ -8,7 +8,7 @@ import { NzTagModule } from 'ng-zorro-antd/tag'
   selector: 'gcd-topic-filter',
   imports: [CommonModule, NzTagModule, NzSpinModule],
   templateUrl: './topic-filter.component.html',
-  styleUrls: ['./topic-filter.component.scss'],
+  styleUrl: './topic-filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TopicFilterComponent {

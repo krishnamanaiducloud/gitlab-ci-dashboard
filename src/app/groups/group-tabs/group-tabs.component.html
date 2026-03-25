@@ -4,7 +4,7 @@
   </div>
 } @else {
   @if (groups().length > 0) {
-    <nz-tabs
+    <nz-tabset
       [nzTabBarExtraContent]="favorites"
       nzSize="small"
       nzType="card"
@@ -30,7 +30,7 @@
           </ng-template>
         </nz-tab>
       }
-    </nz-tabs>
+    </nz-tabset>
     <ng-template #favorites>
       <button nz-button nzType="text" (click)="toggleFavorites()">
         <span nz-icon nzType="star" nzTheme="fill" nzTheme="twotone" nzTwotoneColor="#FFD700"></span>

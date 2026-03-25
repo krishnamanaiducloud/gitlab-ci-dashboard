@@ -28,14 +28,13 @@
               "src/assets",
               {
                 "glob": "**/*",
-                "input": "./node_modules/@ant-design/icons-angular/src/inline-svg/",
-                "output": "/assets/"
+                "input": "node_modules/@ant-design/icons-angular/src/inline-svg/",
+                "output": "/assets/icons/"
               }
             ],
             "styles": [
-              "node_modules/@fontsource/roboto/400.css",
               "node_modules/normalize.css/normalize.css",
-              "node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
+              "node_modules/@fontsource/roboto/index.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -45,8 +44,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "1600kb",
-                  "maximumError": "2500kb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -66,9 +65,6 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
-          "options": {
-            "proxyConfig": "proxy.conf.js"
-          },
           "configurations": {
             "production": {
               "buildTarget": "gitlab-ci-dashboard:build:production"
@@ -86,19 +82,39 @@
           }
         },
         "test": {
-          "builder": "@angular-builders/jest:run",
+          "builder": "@angular/build:test",
           "options": {
+            "polyfills": [],
             "tsConfig": "tsconfig.spec.json",
-            "polyfills": ["zone.js", "zone.js/testing"],
-            "include": ["src/**/*.spec.ts"],
-            "coverage": false
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "src/favicon.svg",
+              "src/assets"
+            ],
+            "styles": [
+              "node_modules/normalize.css/normalize.css",
+              "node_modules/@fontsource/roboto/index.css",
+              "src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular/eslint:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }
     }
   },
   "cli": {
-    "analytics": false
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   },
   "schematics": {
     "@schematics/angular:component": {

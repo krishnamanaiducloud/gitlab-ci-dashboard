@@ -40,7 +40,7 @@ const tabs: Tab[] = [
   selector: 'gcd-feature-tabs',
   imports: [CommonModule, NzTabsModule, NzIconModule, LatestPipelinesComponent, PipelinesComponent, SchedulesComponent],
   templateUrl: './feature-tabs.component.html',
-  styleUrls: ['./feature-tabs.component.scss'],
+  styleUrl: './feature-tabs.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FeatureTabsComponent {

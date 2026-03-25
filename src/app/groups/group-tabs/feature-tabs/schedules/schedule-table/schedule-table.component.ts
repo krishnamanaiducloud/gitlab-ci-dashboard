@@ -27,7 +27,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzI18nService } from 'ng-zorro-antd/i18n'
 import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzTableModule } from 'ng-zorro-antd/table'
-import { NzTooltipModule } from 'ng-zorro-antd/tooltip'
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip'
 import { finalize, interval, map, Subscription, switchMap } from 'rxjs'
 import { DownloadArtifactsIconComponent } from '../../components/download-artifacts-icon/download-artifacts-icon.component'
 import { JobsComponent } from '../../components/jobs/jobs.component'
@@ -83,7 +83,7 @@ const headers: Header<ScheduleProjectPipeline>[] = [
   imports: [
     CommonModule,
     NzTableModule,
-    NzTooltipModule,
+    NzToolTipModule,
     NzButtonModule,
     NzIconModule,
     NzBadgeModule,
@@ -98,7 +98,7 @@ const headers: Header<ScheduleProjectPipeline>[] = [
     CoverageColorPipe
   ],
   templateUrl: './schedule-table.component.html',
-  styleUrls: ['./schedule-table.component.scss'],
+  styleUrl: './schedule-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScheduleTableComponent implements OnDestroy {

@@ -5,9 +5,8 @@
         type="text"
         nz-input
         autocomplete="off"
-        [placeholder]="placeholder"
-        [ngModel]="filterText"
-        (ngModelChange)="update($event)"
+        [placeholder]="placeholder()"
+        [(ngModel)]="filterText"
       />
     </nz-input-group>
 
@@ -24,4 +23,3 @@
     </ng-template>
   </div>
 </div>
-

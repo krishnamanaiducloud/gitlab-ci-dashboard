@@ -2,7 +2,6 @@ import { FETCH_REFRESH_INTERVAL } from '$groups/http'
 import { GroupId } from '$groups/model/group'
 import { ProjectId } from '$groups/model/project'
 import { ScheduleProjectPipeline } from '$groups/model/schedule'
-import { Status } from '$groups/model/status'
 import { filterFailedJobs, filterProject } from '$groups/util/filter'
 import { forkJoinFlatten } from '$groups/util/fork'
 import { CommonModule } from '@angular/common'
@@ -29,7 +28,7 @@ import { ScheduleService } from './service/schedule.service'
     JobFilterComponent
   ],
   templateUrl: './schedules.component.html',
-  styleUrls: ['./schedules.component.scss'],
+  styleUrl: './schedules.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SchedulesComponent implements OnInit {
@@ -103,14 +102,6 @@ export class SchedulesComponent implements OnInit {
       .subscribe((result) => this.schedulePipelines.set(result))
   }
 
-  onFilterTopicsChanged(v: string[]) { this.filterTopics.set(v) }
-  onFilterTextChanged(v: string) { this.filterText.set(v) }
-  onFilterGroupChanged(v: string) { this.filterGroup.set(v) }
-  onFilterBranchChanged(v: string) { this.filterBranch.set(v) }
-  onFilterTriggerChanged(v: string) { this.filterTrigger.set(v) }
-  onFilterStatusChanged(v: string) { this.filterStatus.set(v) }
-  onFilterJobsChanged(v: string[]) { this.filterJobs.set(v) }
-
   exportCsv() {
     const rows = this.filteredSchedulePipelines().map(p => ({
       project: p.project.name,
@@ -138,4 +129,3 @@ export class SchedulesComponent implements OnInit {
     URL.revokeObjectURL(url)
   }
 }
-

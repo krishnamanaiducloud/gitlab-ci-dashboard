@@ -10,7 +10,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzSpinModule } from 'ng-zorro-antd/spin'
 import { NzTabChangeEvent, NzTabsModule } from 'ng-zorro-antd/tabs'
-import { NzTooltipModule } from 'ng-zorro-antd/tooltip'
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip'
 import { finalize, map } from 'rxjs'
 import { FavoritesComponent } from './favorites/favorites.component'
 import { FeatureTabsComponent } from './feature-tabs/feature-tabs.component'
@@ -25,14 +25,14 @@ import { ProjectId } from '$groups/model/project'
     NzButtonModule,
     NzTabsModule,
     NzSpinModule,
-    NzTooltipModule,
+    NzToolTipModule,
     NzIconModule,
     FeatureTabsComponent,
     MaxLengthPipe,
     FavoritesComponent
   ],
   templateUrl: './group-tabs.component.html',
-  styleUrls: ['./group-tabs.component.scss']
+  styleUrl: './group-tabs.component.scss'
 })
 export class GroupTabsComponent {
   private groupService = inject(GroupService)

@@ -1,7 +1,7 @@
 # Gitlab CI Dashboard
 
-[![Docker Image Version](https://img.shields.io/docker/v/larscom/gitlab-ci-dashboard?sort=semver&label=latest%20release&color=blue)](https://hub.docker.com/r/larscom/gitlab-ci-dashboard)
-[![workflow](https://github.com/larscom/gitlab-ci-dashboard/actions/workflows/workflow.yml/badge.svg)](https://github.com/larscom/gitlab-ci-dashboard/actions/workflows/workflow.yml)
+[![Docker Image Version](https://img.shields.io/docker/v/krishnamanaiducloud/gitlab-ci-dashboard?sort=semver&label=latest%20release&color=blue)](https://hub.docker.com/r/krishnamanaiducloud/gitlab-ci-dashboard)
+[![workflow](https://github.com/krishnamanaiducloud/gitlab-ci-dashboard/actions/workflows/workflow.yml/badge.svg)](https://github.com/krishnamanaiducloud/gitlab-ci-dashboard/actions/workflows/workflow.yml)
 [![License MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ![Preview](.github/img/preview.png)
@@ -13,10 +13,6 @@ single group.
 The default functionality of Gitlab is limited at the project level. This can become hard to manage when you have a lot
 of
 projects, potentially resulting in undetected failed pipelines.
-
-## 👉 [Demo](https://gitlab-ci-dashboard.larscom.nl)
-
-<br />
 
 ## 🚀 Highlights
 
@@ -70,7 +66,7 @@ docker run \
   -p 8080:8080 \
   -e GITLAB_BASE_URL=https://gitlab.com \
   -e GITLAB_API_TOKEN=my_token \
-  larscom/gitlab-ci-dashboard:latest
+  krishnamanaiducloud/gitlab-ci-dashboard:latest
 ```
 
 Or you can run it with a TOML configration file
@@ -79,7 +75,7 @@ Or you can run it with a TOML configration file
 docker run \
   -p 8080:8080 \
   -v ./config.toml:/app/config.toml \
-  larscom/gitlab-ci-dashboard:latest
+  krishnamanaiducloud/gitlab-ci-dashboard:latest
 ```
 
 3. Dashboard should be available at: http://localhost:8080/ showing (by default) all available groups and their
@@ -116,7 +112,7 @@ Mount the `config.toml` inside the container (`/app/config.toml`)
 docker run \
   -p 8080:8080 \
   -v ./config.toml:/app/config.toml \
-  larscom/gitlab-ci-dashboard:latest
+  krishnamanaiducloud/gitlab-ci-dashboard:latest
 ```
 
 ## 📜 Custom CA certificate
@@ -132,7 +128,7 @@ docker run \
   -e GITLAB_BASE_URL=https://gitlab.com \
   -e GITLAB_API_TOKEN=my_token \
   -v ./ca.crt:/app/certs/ca.crt \
-  larscom/gitlab-ci-dashboard:latest
+  krishnamanaiducloud/gitlab-ci-dashboard:latest
 ```
 
 ### Troubleshooting

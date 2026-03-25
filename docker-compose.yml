@@ -1,6 +1,6 @@
 services:
   gitlab-ci-dashboard:
-    image: larscom/gitlab-ci-dashboard
+    image: krishnamanaiducloud/gitlab-ci-dashboard
     build:
       context: .
       args:

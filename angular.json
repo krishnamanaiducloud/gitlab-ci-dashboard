@@ -86,12 +86,12 @@
           }
         },
         "test": {
-          "builder": "@angular-builders/jest:run",
+          "builder": "@angular/build:unit-test",
           "options": {
+            "buildTarget": "gitlab-ci-dashboard:build:development",
             "tsConfig": "tsconfig.spec.json",
-            "polyfills": ["zone.js", "zone.js/testing"],
-            "include": ["src/**/*.spec.ts"],
-            "coverage": false
+            "runner": "vitest",
+            "include": ["src/**/*.spec.ts"]
           }
         }
       }

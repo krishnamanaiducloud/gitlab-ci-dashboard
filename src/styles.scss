@@ -3,11 +3,26 @@
   --font-size-small: calc(var(--font-size-base) * 0.75);
   --font-size-medium: calc(var(--font-size-base) * 1.25);
   --font-size-large: calc(var(--font-size-base) * 1.5);
+  --color-primary: #2563eb;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
-  font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+  font-family: 'Roboto', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: var(--font-size-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #1a1a1a;
+  line-height: 1.5;
+}
+
+::selection {
+  background: rgba(37, 99, 235, 0.15);
 }
 
 .ant-table.ant-table-small .ant-table-tbody .ant-table-wrapper:only-child .ant-table {

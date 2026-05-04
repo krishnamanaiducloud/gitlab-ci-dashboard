@@ -3,6 +3,7 @@
   margin-left: auto;
   min-width: 768px;
   padding: 1.5rem;
+  padding-bottom: 4rem;
 }
 
 .alert {
@@ -18,19 +19,20 @@
   bottom: 0;
   left: 0;
 
-  background: #fafafa;
-  padding: 12px 0;
+  background: linear-gradient(180deg, #f8f9fa 0%, #eef1f5 100%);
+  padding: 10px 0;
 
   text-align: center;
-  font-size: 14px;
-  color: #666;
+  font-size: 13px;
+  color: #555;
+  font-weight: 400;
+  letter-spacing: 0.02em;
 
-  border-top: 1px solid #e5e5e5;
+  border-top: 1px solid #dde1e6;
   z-index: 1000;
-  
+
   @media (max-width: 768px) {
     font-size: 12px;
-    padding: 10px 0;
+    padding: 8px 0;
   }
 }
-

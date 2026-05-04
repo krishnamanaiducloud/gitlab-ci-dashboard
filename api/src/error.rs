@@ -46,7 +46,7 @@ impl Default for ApiError {
     fn default() -> Self {
         Self::new(
             StatusCode::INTERNAL_SERVER_ERROR,
-            "an internal server error occured",
+            "an internal server error occurred",
         )
     }
 }

@@ -26,7 +26,7 @@ export type ProjectId = number
 export interface Project {
   id: ProjectId
   name: string
-  default_branch: string
+  default_branch: string | null
   web_url: string
   topics: string[]
   description?: string

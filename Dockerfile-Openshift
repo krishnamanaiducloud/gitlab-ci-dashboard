@@ -1,7 +1,7 @@
 ############################################
 # 1) Frontend build (Angular - optimized)
 ############################################
-FROM node:25.8.1-alpine3.23 AS fe
+FROM node:24-alpine3.23 AS fe
 
 WORKDIR /builder
 
@@ -13,17 +13,17 @@ RUN npm ci --legacy-peer-deps --ignore-scripts
 COPY angular.json ./
 COPY tsconfig*.json ./
 COPY proxy.conf.js ./
-COPY .npmrc ./
 COPY src ./src
 
-# Build Angular
-RUN npm run build
+# Build Angular (BASE_PATH for Istio VirtualService path-based routing)
+ARG BASE_PATH=/
+RUN npx ng build --base-href=${BASE_PATH}
 
 
 ############################################
 # 2) Backend build (Rust - production optimized)
 ############################################
-FROM rust:alpine3.23 AS be
+FROM rust:1.95.0-alpine3.23 AS be
 
 WORKDIR /builder
 
@@ -51,8 +51,8 @@ RUN cargo build --release
 # -------------------------------
 COPY api/src ./src
 
-# Clean + rebuild (ensures correct binary)
-RUN cargo clean && cargo build --release
+# Touch source to invalidate cache and rebuild with real code
+RUN touch src/main.rs && cargo build --release
 
 # Validate binary exists (fail fast)
 RUN test -f target/release/gcd_api
@@ -61,7 +61,7 @@ RUN test -f target/release/gcd_api
 ############################################
 # 3) Certs + timezone
 ############################################
-FROM alpine:3.23.3 AS certs
+FROM alpine:3.23 AS certs
 
 RUN apk add --no-cache ca-certificates tzdata
 
@@ -74,7 +74,7 @@ FROM gcr.io/distroless/static-debian12:nonroot
 WORKDIR /app
 
 # Metadata
-ARG VERSION_ARG=0.0.3
+ARG VERSION_ARG=0.0.4
 ENV VERSION=${VERSION_ARG}
 ENV RUST_LOG=info
 

@@ -7,7 +7,6 @@ import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
 @Component({
   selector: 'gcd-text-filter',
-  standalone: true,
   imports: [CommonModule, FormsModule, NzInputModule, NzIconModule, NzTooltipModule],
   templateUrl: './text-filter.component.html',
   styleUrls: ['./text-filter.component.scss'],
@@ -27,4 +26,3 @@ export class TextFilterComponent {
     this.update('');
   }
 }
-

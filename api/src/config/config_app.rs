@@ -58,6 +58,8 @@ pub struct AppConfig {
     pub group_skip_ids: Vec<u64>,
     pub group_only_top_level: bool,
     pub group_include_subgroups: bool,
+
+    pub base_path: String,
 }
 
 impl From<&config_file::FileConfig> for AppConfig {
@@ -81,6 +83,7 @@ impl From<&config_file::FileConfig> for AppConfig {
             group_skip_ids: config.group.skip_ids.clone(),
             group_only_top_level: config.group.only_top_level,
             group_include_subgroups: config.group.include_subgroups,
+            base_path: normalize_base_path(from_env_or_default("BASE_PATH", String::default())),
         }
     }
 }
@@ -139,6 +142,7 @@ impl AppConfig {
             )),
             group_only_top_level: from_env_or_default("GITLAB_GROUP_ONLY_TOP_LEVEL", true),
             group_include_subgroups: from_env_or_default("GITLAB_GROUP_INCLUDE_SUBGROUPS", true),
+            base_path: normalize_base_path(from_env_or_default("BASE_PATH", String::default())),
         }
     }
 
@@ -159,6 +163,19 @@ where
         .ok()
         .and_then(|value| value.parse().ok())
         .unwrap_or(default)
+}
+
+fn normalize_base_path(path: String) -> String {
+    let path = path.trim().to_string();
+    if path.is_empty() || path == "/" {
+        return String::default();
+    }
+    let path = if path.starts_with('/') {
+        path
+    } else {
+        format!("/{path}")
+    };
+    path.trim_end_matches('/').to_string()
 }
 
 fn split_into<T: FromStr>(value: String) -> Vec<T> {
@@ -202,6 +219,7 @@ mod tests {
         assert_eq!(config.group_skip_ids, vec![7, 8, 9]);
         assert!(!config.group_only_top_level);
         assert!(!config.group_include_subgroups);
+        assert!(config.base_path.is_empty());
     }
 
     #[test]
@@ -231,6 +249,18 @@ mod tests {
         assert!(config.group_skip_ids.is_empty());
         assert!(config.group_only_top_level);
         assert!(config.group_include_subgroups);
+        assert!(config.base_path.is_empty());
+    }
+
+    #[test]
+    fn test_normalize_base_path() {
+        assert_eq!(normalize_base_path(String::default()), "");
+        assert_eq!(normalize_base_path("/".into()), "");
+        assert_eq!(normalize_base_path("  ".into()), "");
+        assert_eq!(normalize_base_path("/dashboard".into()), "/dashboard");
+        assert_eq!(normalize_base_path("dashboard".into()), "/dashboard");
+        assert_eq!(normalize_base_path("/dashboard/".into()), "/dashboard");
+        assert_eq!(normalize_base_path("/app/v1/".into()), "/app/v1");
     }
 
     #[test]

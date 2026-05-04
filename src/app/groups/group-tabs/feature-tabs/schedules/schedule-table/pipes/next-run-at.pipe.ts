@@ -1,8 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core'
 
 @Pipe({
-  name: 'nextRunAt',
-  standalone: true
+  name: 'nextRunAt'
 })
 export class NextRunAtPipe implements PipeTransform {
   transform(dateTime: string): string {

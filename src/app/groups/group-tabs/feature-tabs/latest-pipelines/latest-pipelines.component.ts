@@ -25,7 +25,6 @@ import { TextFilterComponent } from '../components/text-filter/text-filter.compo
 
 @Component({
   selector: 'gcd-latest-pipelines',
-  standalone: true,
   imports: [
     CommonModule,
     NzSpinModule,
@@ -104,15 +103,17 @@ export class LatestPipelinesComponent implements OnInit {
     const rows = this.projectPipelines().map(p => ({
       project: p.project.name,
       group: p.project.namespace.name,
-      branch: p.project.default_branch,
+      branch: p.project.default_branch ?? '',
       trigger: p.pipeline?.source ?? '',
       last_run: p.pipeline?.updated_at ?? ''
     }))
 
+    const esc = (v: string) => /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v
+
     const csv = [
       'Project,Group,Branch,Trigger,Last Run',
       ...rows.map(r =>
-        `${r.project},${r.group},${r.branch},${r.trigger},${r.last_run}`
+        [r.project, r.group, r.branch, r.trigger, r.last_run].map(v => esc(String(v))).join(',')
       )
     ].join('\n')
 
@@ -127,4 +128,3 @@ export class LatestPipelinesComponent implements OnInit {
     URL.revokeObjectURL(url)
   }
 }
-

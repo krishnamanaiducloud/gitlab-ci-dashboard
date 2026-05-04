@@ -43,6 +43,7 @@ async fn main() -> std::io::Result<()> {
     let api_config = config_app::ApiConfig::from_file_config(file_config);
 
     log::info!("Gitlab CI Dashboard :: {} ::", &api_config.api_version);
+    log::info!("Base path: '{}'", if app_config.base_path.is_empty() { "/" } else { &app_config.base_path });
 
     log::debug!("{app_config:?}");
     log::debug!("{api_config:?}");
@@ -98,6 +99,7 @@ async fn main() -> std::io::Result<()> {
     ));
 
     let prom = setup_prometheus();
+    let base_path = app_config.base_path.clone();
 
     HttpServer::new(move || {
         App::new()
@@ -114,6 +116,7 @@ async fn main() -> std::io::Result<()> {
                 pipeline_service.clone(),
                 branch_service.clone(),
                 artifact_service.clone(),
+                base_path.clone(),
             ))
     })
     .bind((app_config.server_ip, app_config.server_port))?
@@ -134,32 +137,54 @@ fn configure_app(
     pipeline_service: Data<pipeline::PipelineService>,
     branch_service: Data<branch::BranchService>,
     artifact_service: Data<artifact::ArtifactService>,
+    base_path: String,
 ) -> impl FnOnce(&mut ServiceConfig) {
     move |config| {
-        config
-            .app_data(api_config)
-            .app_data(qs_config)
-            .app_data(group_service)
-            .app_data(project_aggr)
-            .app_data(branch_aggr)
-            .app_data(schedule_aggr)
-            .app_data(job_service)
-            .app_data(pipeline_service)
-            .app_data(branch_service)
-            .app_data(artifact_service)
-            .route("/health", web::get().to(health_handler))
-            .service(
-                scope("/api")
-                    .configure(config::setup_handlers)
-                    .configure(group::setup_handlers)
-                    .configure(project::setup_handlers)
-                    .configure(pipeline::setup_handlers)
-                    .configure(branch::setup_handlers)
-                    .configure(schedule::setup_handlers)
-                    .configure(job::setup_handlers)
-                    .configure(artifact::setup_handlers),
-            )
-            .service(setup_spa());
+        // Health endpoint always at root for k8s/Istio probes
+        config.route("/health", web::get().to(health_handler));
+
+        let api_scope = scope("/api")
+            .configure(config::setup_handlers)
+            .configure(group::setup_handlers)
+            .configure(project::setup_handlers)
+            .configure(pipeline::setup_handlers)
+            .configure(branch::setup_handlers)
+            .configure(schedule::setup_handlers)
+            .configure(job::setup_handlers)
+            .configure(artifact::setup_handlers);
+
+        if base_path.is_empty() {
+            config
+                .app_data(api_config)
+                .app_data(qs_config)
+                .app_data(group_service)
+                .app_data(project_aggr)
+                .app_data(branch_aggr)
+                .app_data(schedule_aggr)
+                .app_data(job_service)
+                .app_data(pipeline_service)
+                .app_data(branch_service)
+                .app_data(artifact_service)
+                .service(api_scope)
+                .service(setup_spa());
+        } else {
+            config.service(
+                scope(&base_path)
+                    .app_data(api_config)
+                    .app_data(qs_config)
+                    .app_data(group_service)
+                    .app_data(project_aggr)
+                    .app_data(branch_aggr)
+                    .app_data(schedule_aggr)
+                    .app_data(job_service)
+                    .app_data(pipeline_service)
+                    .app_data(branch_service)
+                    .app_data(artifact_service)
+                    .route("/health", web::get().to(health_handler))
+                    .service(api_scope)
+                    .service(setup_spa()),
+            );
+        }
     }
 }
 
@@ -273,6 +298,7 @@ mod tests {
                 pipeline_service,
                 branch_service,
                 artifact_service,
+                String::default(),
             )))
             .await
         }};

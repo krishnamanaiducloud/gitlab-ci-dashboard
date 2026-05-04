@@ -1,8 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core'
 
 @Pipe({
-  name: 'coverageColor',
-  standalone: true
+  name: 'coverageColor'
 })
 export class CoverageColorPipe implements PipeTransform {
   transform(coverage?: number): string {

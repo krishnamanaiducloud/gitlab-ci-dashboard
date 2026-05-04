@@ -16,7 +16,6 @@ interface Tab {
 
 @Component({
   selector: 'gcd-pipeline-status-tabs',
-  standalone: true,
   imports: [
     CommonModule,
     NzTabsModule,
@@ -54,7 +53,7 @@ export class PipelineStatusTabsComponent {
           project.namespace.name.toLowerCase().includes(this.filterGroup().toLowerCase())
         )
         .filter(({ project }) =>
-          project.default_branch.toLowerCase().includes(this.filterBranch().toLowerCase())
+          (project.default_branch ?? '').toLowerCase().includes(this.filterBranch().toLowerCase())
         )
         .filter(({ pipeline }) =>
           pipeline?.source?.toLowerCase().includes(this.filterTrigger().toLowerCase())
@@ -80,4 +79,3 @@ export class PipelineStatusTabsComponent {
     return status
   }
 }
-

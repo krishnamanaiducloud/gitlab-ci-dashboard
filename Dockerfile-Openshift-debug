@@ -1,7 +1,7 @@
 ############################################
 # 1) Frontend build (Angular)
 ############################################
-FROM node:25.8.1-alpine3.23 AS fe
+FROM node:24-alpine3.23 AS fe
 
 WORKDIR /builder
 
@@ -9,13 +9,14 @@ COPY package*.json ./
 RUN npm ci --legacy-peer-deps --ignore-scripts
 
 COPY . .
-RUN npm run build
+ARG BASE_PATH=/
+RUN npx ng build --base-href=${BASE_PATH}
 
 
 ############################################
 # 2) Backend build (Rust API — musl/static)
 ############################################
-FROM rust:alpine3.23 AS be
+FROM rust:1.95.0-alpine3.23 AS be
 
 WORKDIR /builder
 
@@ -35,7 +36,7 @@ RUN cargo build --release
 ############################################
 # 3) Runtime image (Alpine + debug tools, non-root, OpenShift-friendly)
 ############################################
-FROM alpine:3.23.3
+FROM alpine:3.23
 
 RUN apk add --no-cache \
     ca-certificates \
@@ -54,7 +55,7 @@ RUN addgroup -S app && adduser -S -G app app
 
 WORKDIR /app
 
-ARG VERSION_ARG=0.0.3
+ARG VERSION_ARG=0.0.4
 ENV VERSION=${VERSION_ARG}
 ENV RUST_LOG=debug
 

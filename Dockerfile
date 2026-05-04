@@ -1,7 +1,7 @@
 ############################################
 # 1) Frontend build
 ############################################
-FROM node:25.8.1-alpine3.23 AS fe
+FROM node:24-alpine3.23 AS fe
 
 WORKDIR /builder
 
@@ -11,16 +11,16 @@ RUN npm ci --legacy-peer-deps --ignore-scripts
 COPY angular.json ./
 COPY tsconfig*.json ./
 COPY proxy.conf.js ./
-COPY .npmrc ./
 COPY src ./src
 
-RUN npm run build
+ARG BASE_PATH=/
+RUN npx ng build --base-href=${BASE_PATH}
 
 
 ############################################
 # 2) Backend build (Rust FIXED)
 ############################################
-FROM rust:alpine3.23 AS be
+FROM rust:1.95.0-alpine3.23 AS be
 
 WORKDIR /builder
 
@@ -43,8 +43,8 @@ RUN cargo build --release
 # Copy real source
 COPY api/src ./src
 
-# Force clean + rebuild (fix missing binary issue)
-RUN cargo clean && cargo build --release
+# Touch source to invalidate cache and rebuild with real code
+RUN touch src/main.rs && cargo build --release
 
 # Validate binary exists (fail fast if not)
 RUN test -f target/release/gcd_api
@@ -53,14 +53,14 @@ RUN test -f target/release/gcd_api
 ############################################
 # 3) Certs
 ############################################
-FROM alpine:3.23.3 AS certs
+FROM alpine:3.23 AS certs
 RUN apk add --no-cache ca-certificates tzdata
 
 
 ############################################
 # 4) Runtime
 ############################################
-FROM gcr.io/distroless/static:nonroot
+FROM gcr.io/distroless/static-debian12:nonroot
 
 WORKDIR /app
 

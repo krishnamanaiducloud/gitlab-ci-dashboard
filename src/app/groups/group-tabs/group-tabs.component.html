@@ -4,41 +4,53 @@
   </div>
 } @else {
   @if (groups().length > 0) {
-    <nz-tabs
-      [nzTabBarExtraContent]="favorites"
-      nzSize="small"
-      nzType="card"
-      [nzSelectedIndex]="selectedIndex()"
-      (nzSelectChange)="onChange($event)"
-    >
-      @for (group of groups(); track trackById(group)) {
-        <nz-tab [nzTitle]="title">
-          <ng-template #title>
-            <span
-              class="pointer"
-              [attr.data-group-id]="group.id"
-              nz-tooltip
-              [nzTooltipTitle]="group.name"
-              [nzTooltipMouseEnterDelay]="1"
-              >{{ group.name | maxLength: 25 }}</span
-            >
-          </ng-template>
-          <ng-template nz-tab>
-            @if (selectedGroupId() == group.id) {
-              <gcd-feature-tabs [groupMap]="getGroupMap(group)" />
-            }
-          </ng-template>
-        </nz-tab>
-      }
-    </nz-tabs>
+    <section class="dashboard-panel">
+      <div class="dashboard-panel__head">
+        <div>
+          <span class="eyebrow">Groups</span>
+          <h1>CI activity dashboard</h1>
+        </div>
+        <ng-container [ngTemplateOutlet]="favorites"></ng-container>
+      </div>
+
+      <nz-tabs
+        nzSize="small"
+        nzType="card"
+        [nzSelectedIndex]="selectedIndex()"
+        (nzSelectChange)="onChange($event)"
+      >
+        @for (group of groups(); track trackById(group)) {
+          <nz-tab [nzTitle]="title">
+            <ng-template #title>
+              <span
+                class="pointer group-tab-title"
+                [attr.data-group-id]="group.id"
+                nz-tooltip
+                [nzTooltipTitle]="group.name"
+                [nzTooltipMouseEnterDelay]="1"
+                >{{ group.name | maxLength: 25 }}</span
+              >
+            </ng-template>
+            <ng-template nz-tab>
+              @if (selectedGroupId() == group.id) {
+                <gcd-feature-tabs [groupMap]="getGroupMap(group)" />
+              }
+            </ng-template>
+          </nz-tab>
+        }
+      </nz-tabs>
+    </section>
+
     <ng-template #favorites>
-      <button nz-button nzType="text" (click)="toggleFavorites()">
-        <span nz-icon nzType="star" nzTheme="fill" nzTheme="twotone" nzTwotoneColor="#FFD700"></span>
-        Favorites
-      </button>
-      @if (showFavorites()) {
-        <gcd-favorites (close)="toggleFavorites()"></gcd-favorites>
-      }
+      <div class="favorites-anchor">
+        <button class="favorites-button" nz-button nzType="default" (click)="toggleFavorites()">
+          <span nz-icon nzType="star" nzTheme="fill" nzTheme="twotone" nzTwotoneColor="#f59e0b"></span>
+          Favorites
+        </button>
+        @if (showFavorites()) {
+          <gcd-favorites (close)="toggleFavorites()"></gcd-favorites>
+        }
+      </div>
     </ng-template>
   } @else {
     <div class="alert">

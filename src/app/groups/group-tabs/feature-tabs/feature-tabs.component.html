@@ -1,4 +1,5 @@
 <nz-tabs
+  class="feature-tabs"
   [nzDestroyInactiveTabPane]="true"
   [nzSelectedIndex]="selectedIndex$ | async"
   (nzSelectChange)="onChange($event)"
@@ -9,7 +10,10 @@
   @for (tab of tabs; track tab.id) {
     <nz-tab [nzTitle]="title">
       <ng-template #title>
-        <span nz-icon [nzType]="tab.icon"></span><span class="pointer">{{ tab.title }}</span>
+        <span class="feature-tab-title">
+          <span nz-icon [nzType]="tab.icon"></span>
+          <span class="pointer">{{ tab.title }}</span>
+        </span>
       </ng-template>
       <ng-template nz-tab>
         <div class="tab-content">

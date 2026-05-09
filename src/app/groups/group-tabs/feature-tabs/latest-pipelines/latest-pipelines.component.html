@@ -1,14 +1,7 @@
-<div class="flex flex-col gap-2 w-full">
-
-  <!-- FILTER BY ROW : FIXED ALIGNMENT -->
-  <div class="filter-by-container flex items-center gap-3">
-
-    <span class="filter-label text-sm font-semibold text-gray-600 whitespace-nowrap">
-      Filter by
-    </span>
-
-    <!-- FAILED JOB CHIPS / TAGS ROW (overflow scroll kept) -->
-    <div class="flex flex-nowrap items-center gap-2 overflow-x-auto pb-1">
+<div class="latest-pipelines">
+  <section class="filter-card filter-card--jobs">
+    <span class="filter-label">Failed jobs</span>
+    <div class="filter-chip-row">
       <gcd-job-filter
         [loading]="loading()"
         [jobs]="jobs()"
@@ -16,44 +9,36 @@
         (filterJobsChange)="onFilterJobsChanged($event)"
       ></gcd-job-filter>
     </div>
-  </div>
+  </section>
 
-
-  <!-- TOP FILTER ROW (LEFT FILTERS + RIGHT CSV BUTTON) -->
-  <div class="flex justify-between items-center w-full">
-
-    <!-- LEFT SIDE FILTERS -->
-    <div class="flex flex-nowrap gap-3 items-center overflow-x-auto">
-
-      <!-- PROJECT FILTER -->
+  <section class="toolbar-card">
+    <div class="filter-grid">
       <gcd-project-filter
         [projects]="projects()"
         [filterText]="filterProject()"
         (filterTextChange)="onFilterProjectChanged($event)"
       ></gcd-project-filter>
 
-      <!-- GROUP FILTER -->
       <gcd-text-filter
         [filterText]="filterGroup()"
         placeholder="Search groups..."
         (filterTextChange)="onFilterGroupChanged($event)"
       ></gcd-text-filter>
 
-      <!-- BRANCH FILTER -->
       <gcd-text-filter
         [filterText]="filterBranch()"
         placeholder="Search branches..."
         (filterTextChange)="onFilterBranchChanged($event)"
       ></gcd-text-filter>
 
-      <!-- TRIGGER FILTER -->
       <gcd-text-filter
         [filterText]="filterTrigger()"
         placeholder="Search triggers..."
         (filterTextChange)="onFilterTriggerChanged($event)"
       ></gcd-text-filter>
+    </div>
 
-      <!-- TOPIC FILTER -->
+    <div class="toolbar-actions">
       <gcd-topic-filter
         [loading]="loading()"
         [projects]="projects()"
@@ -61,34 +46,30 @@
         (filterTopicsChange)="onFilterTopicsChanged($event)"
       ></gcd-topic-filter>
 
+      <button class="export-button" nz-button nzType="primary" (click)="exportCsv()">
+        <span nz-icon nzType="download"></span>
+        Export CSV
+      </button>
     </div>
+  </section>
 
-    <!-- RIGHT SIDE CSV BUTTON -->
-    <button nz-button nzType="default" (click)="exportCsv()">
-      Export CSV
-    </button>
-
-  </div>
-
-
-  <!-- TABLE SECTION -->
-  @if (loading()) {
-    <nz-spin />
-  } @else {
-
-    <gcd-pipeline-status-tabs
-      [projectPipelines]="projectPipelines()"
-      [filterProject]="filterProject()"
-      [filterGroup]="filterGroup()"
-      [filterBranch]="filterBranch()"
-      [filterTrigger]="filterTrigger()"
-      [filterTopics]="filterTopics()"
-      [filterJobs]="filterJobs()"
-      [filterText]="filterProject()"
-    >
-    </gcd-pipeline-status-tabs>
-
-  }
-
+  <section class="table-card">
+    @if (loading()) {
+      <div class="table-loading">
+        <nz-spin />
+      </div>
+    } @else {
+      <gcd-pipeline-status-tabs
+        [projectPipelines]="projectPipelines()"
+        [filterProject]="filterProject()"
+        [filterGroup]="filterGroup()"
+        [filterBranch]="filterBranch()"
+        [filterTrigger]="filterTrigger()"
+        [filterTopics]="filterTopics()"
+        [filterJobs]="filterJobs()"
+        [filterText]="filterProject()"
+      >
+      </gcd-pipeline-status-tabs>
+    }
+  </section>
 </div>
-

@@ -1,0 +1,60 @@
+Node.js version v25.8.2 detected.
+Odd numbered Node.js versions will not enter LTS status and should not be used for production. For more information, please see https://nodejs.org/en/about/previous-releases/.
+[1m[33m[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`[39m[22m
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[1m[31m[2m11:29:00 AM[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/config[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1193:18)
+    at afterConnectMultiple (node:net:1783:7)[39m[22m
+[1m[31m[2m11:29:00 AM[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/groups[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1193:18)
+    at afterConnectMultiple (node:net:1783:7)[39m[22m
+[1m[31m[2m11:29:00 AM[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/groups[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1193:18)
+    at afterConnectMultiple (node:net:1783:7)[39m[22m
+[1m[31m[2m11:29:01 AM[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/groups[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1193:18)
+    at afterConnectMultiple (node:net:1783:7)[39m[22m
+[1m[31m[2m11:29:02 AM[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/groups[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1193:18)
+    at afterConnectMultiple (node:net:1783:7)[39m[22m
+[1m[31m[2m11:29:02 AM[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/groups[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1193:18)
+    at afterConnectMultiple (node:net:1783:7)[39m[22m
+[1m[31m[2m11:29:03 AM[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/groups[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1193:18)
+    at afterConnectMultiple (node:net:1783:7)[39m[22m
+[1m[31m[2m11:29:07 AM[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/config[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1193:18)
+    at afterConnectMultiple (node:net:1783:7)[39m[22m
+[1m[31m[2m11:29:07 AM[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/groups[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1193:18)
+    at afterConnectMultiple (node:net:1783:7)[39m[22m
+[1m[31m[2m11:29:08 AM[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/groups[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1193:18)
+    at afterConnectMultiple (node:net:1783:7)[39m[22m
+[1m[31m[2m11:29:08 AM[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/groups[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1193:18)
+    at afterConnectMultiple (node:net:1783:7)[39m[22m
+[1m[31m[2m11:29:09 AM[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/groups[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1193:18)
+    at afterConnectMultiple (node:net:1783:7)[39m[22m
+[1m[31m[2m11:29:09 AM[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/groups[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1193:18)
+    at afterConnectMultiple (node:net:1783:7)[39m[22m
+[1m[31m[2m11:29:10 AM[22m[1m [31m[1m[vite][22m[1m[31m [31mhttp proxy error: /api/groups[31m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1193:18)
+    at afterConnectMultiple (node:net:1783:7)[39m[22m

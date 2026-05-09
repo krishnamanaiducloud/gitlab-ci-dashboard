@@ -1,3 +1,13 @@
 .tab-content {
   min-height: 200px;
+  padding: 1rem;
+  background: var(--color-page);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+}
+
+.feature-tab-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 700;
 }

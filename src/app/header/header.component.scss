@@ -1,23 +1,102 @@
 .header {
-  padding: 0.75rem 1.25rem;
-  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1001;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  height: 3.75rem;
-  max-height: 3.75rem;
-  min-width: 768px;
-  background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  justify-content: space-between;
+  min-height: 4.25rem;
+  padding: 0.75rem 1.5rem;
+  color: #fff;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 64, 175, 0.94)),
+    #0f172a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.18);
 }
 
-button {
-  padding: 0;
+.brand,
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.brand {
+  gap: 0.8rem;
+  min-width: 0;
+}
+
+.brand-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  font-size: 20px;
+  color: #dbeafe;
+  background: rgba(255, 255, 255, 0.11);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+}
+
+.brand-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  line-height: 1.2;
 }
 
 .title {
   padding: 0;
   margin: 0;
-  font-weight: 500;
-  letter-spacing: 0.025em;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.brand-copy span {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.76rem;
+}
+
+.header-actions {
+  gap: 0.65rem;
+}
+
+.version-pill {
+  min-height: 28px;
+  padding: 0.3rem 0.65rem;
+  color: #dbeafe;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+}
+
+.github-button {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  color: #fff;
+  border-radius: 8px;
+}
+
+.github-button:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+@media (max-width: 640px) {
+  .header {
+    min-height: 3.75rem;
+    padding: 0.65rem 0.85rem;
+  }
+
+  .brand-copy span,
+  .version-pill {
+    display: none;
+  }
 }

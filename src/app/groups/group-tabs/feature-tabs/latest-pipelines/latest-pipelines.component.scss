@@ -1,30 +1,113 @@
-/* Reduce nz-spin height */
-nz-spin {
-  height: 25px;
+.latest-pipelines {
+  display: grid;
+  gap: 0.9rem;
 }
 
-/* Fix Filter-by baseline alignment */
-.filter-by-container {
+.filter-card,
+.toolbar-card,
+.table-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.filter-card {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding-bottom: 2px;
-  line-height: 1.2;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 0.85rem 1rem;
 }
 
 .filter-label {
-  display: flex;
-  align-items: center;
-  height: 24px;
-  line-height: 24px;
-}
-
-/* Normalize tag/chip components for vertical alignment */
-.filter-by-container ::ng-deep .tag,
-.filter-by-container ::ng-deep .ant-tag {
   display: inline-flex;
   align-items: center;
-  height: 24px !important;
-  line-height: 24px !important;
+  min-height: 24px;
+  flex: 0 0 auto;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
+.filter-chip-row {
+  min-width: 0;
+  flex: 1;
+  overflow-x: auto;
+}
+
+.toolbar-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(190px, 1fr));
+  gap: 0.75rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  max-width: 520px;
+}
+
+.export-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex: 0 0 auto;
+  font-weight: 800;
+  border-radius: var(--radius-md);
+}
+
+.table-card {
+  overflow: hidden;
+}
+
+.table-loading {
+  display: grid;
+  min-height: 14rem;
+  place-items: center;
+}
+
+@media (max-width: 1260px) {
+  .toolbar-card {
+    flex-direction: column;
+  }
+
+  .filter-grid {
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(190px, 1fr));
+  }
+
+  .toolbar-actions {
+    width: 100%;
+    max-width: none;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 720px) {
+  .filter-card {
+    flex-direction: column;
+  }
+
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

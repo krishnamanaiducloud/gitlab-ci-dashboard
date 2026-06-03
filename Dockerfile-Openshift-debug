@@ -1,7 +1,7 @@
 ############################################
 # 1) Frontend build (Angular)
 ############################################
-FROM node:24-alpine3.23 AS fe
+FROM node:24.16-alpine3.23 AS fe
 
 WORKDIR /builder
 
@@ -16,7 +16,7 @@ RUN npx ng build --base-href=${BASE_PATH}
 ############################################
 # 2) Backend build (Rust API — musl/static)
 ############################################
-FROM rust:1.95.0-alpine3.23 AS be
+FROM rust:1.96.0-alpine3.23 AS be
 
 WORKDIR /builder
 
@@ -36,19 +36,25 @@ RUN cargo build --release
 ############################################
 # 3) Runtime image (Alpine + debug tools, non-root, OpenShift-friendly)
 ############################################
-FROM alpine:3.23
+FROM alpine:3.23.4
 
-RUN apk add --no-cache \
-    ca-certificates \
-    tzdata \
-    bash \
-    curl \
-    wget \
-    procps \
-    net-tools \
-    bind-tools \
-    strace \
-    lsof
+RUN apk update && apk upgrade --no-cache \
+    && apk add --no-cache \
+        ca-certificates \
+        tzdata \
+        bash \
+        curl \
+        wget \
+        procps \
+        net-tools \
+        bind-tools \
+        strace \
+        lsof \
+    && apk add --no-cache --upgrade \
+        libcurl \
+        busybox \
+        busybox-binsh \
+        ssl_client
 
 # Create non-root user
 RUN addgroup -S app && adduser -S -G app app

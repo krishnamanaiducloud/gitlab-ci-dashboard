@@ -161,3 +161,16 @@ If there is a mismatch the HTTP client is still unable to make a proper connecti
 | SERVER_LISTEN_PORT                | int    | The port where the web server should listen on                                                                                     | no       | 8080         |
 | SERVER_WORKER_COUNT               | int    | The amount of worker threads the web server should have                                                                            | no       | CPU specific |
 | RUST_LOG                          | string | The log level of the application, set to "debug" to enable debug logging                                                           | no       | info         |
+
+## 🔒 Security & Base Images
+
+| Stage | Image | Purpose |
+|-------|-------|---------|
+| Frontend build | `node:24.16-alpine3.23` | Angular build (ephemeral, not in final image) |
+| Backend build | `rust:1.96.0-alpine3.23` | Rust binary compilation (ephemeral) |
+| Certs | `alpine:3.23.4` | Extract CA certificates (ephemeral) |
+| **Runtime** | `gcr.io/distroless/static-debian12:nonroot` | Final production image |
+
+The production runtime uses **Google Distroless**, which contains only the compiled binary, CA certs, and timezone data — no shell, no package manager, no OS utilities. This results in a minimal attack surface with near-zero OS vulnerabilities.
+
+Build stages run `apk update && apk upgrade --no-cache` to ensure all packages are at their latest patched versions during image creation. The debug Dockerfile (`Dockerfile-Openshift-debug`) additionally performs explicit upgrades on `libcurl`, `busybox`, `busybox-binsh`, and `ssl_client` to mitigate known CVEs.

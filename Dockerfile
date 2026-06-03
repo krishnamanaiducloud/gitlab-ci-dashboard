@@ -1,7 +1,7 @@
 ############################################
 # 1) Frontend build
 ############################################
-FROM node:24-alpine3.23 AS fe
+FROM node:24.16-alpine3.23 AS fe
 
 WORKDIR /builder
 
@@ -20,7 +20,7 @@ RUN npx ng build --base-href=${BASE_PATH}
 ############################################
 # 2) Backend build (Rust FIXED)
 ############################################
-FROM rust:1.95.0-alpine3.23 AS be
+FROM rust:1.96.0-alpine3.23 AS be
 
 WORKDIR /builder
 
@@ -53,8 +53,9 @@ RUN test -f target/release/gcd_api
 ############################################
 # 3) Certs
 ############################################
-FROM alpine:3.23 AS certs
-RUN apk add --no-cache ca-certificates tzdata
+FROM alpine:3.23.4 AS certs
+RUN apk update && apk upgrade --no-cache \
+    && apk add --no-cache ca-certificates tzdata
 
 
 ############################################

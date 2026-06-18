@@ -1,7 +1,7 @@
 ############################################
 # 1) Frontend build (Angular)
 ############################################
-FROM node:24.16-alpine3.23 AS fe
+FROM node:24.16-alpine3.24 AS fe
 
 WORKDIR /builder
 
@@ -16,7 +16,7 @@ RUN npx ng build --base-href=${BASE_PATH}
 ############################################
 # 2) Backend build (Rust API — musl/static)
 ############################################
-FROM rust:1.96.0-alpine3.23 AS be
+FROM rust:1.96.0-alpine3.24 AS be
 
 WORKDIR /builder
 
@@ -36,7 +36,7 @@ RUN cargo build --release
 ############################################
 # 3) Runtime image (Alpine + debug tools, non-root, OpenShift-friendly)
 ############################################
-FROM alpine:3.23.4
+FROM alpine:3.24.1
 
 RUN apk update && apk upgrade --no-cache \
     && apk add --no-cache \

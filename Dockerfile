@@ -53,7 +53,7 @@ RUN test -f target/release/gcd_api
 ############################################
 # 3) Certs
 ############################################
-FROM alpine:3.23.4 AS certs
+FROM alpine:3.24.1 AS certs
 RUN apk update && apk upgrade --no-cache \
     && apk add --no-cache ca-certificates tzdata
 

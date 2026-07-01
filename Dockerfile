@@ -1,7 +1,10 @@
 ############################################
 # 1) Frontend build
 ############################################
-FROM node:24.16-alpine3.23 AS fe
+ARG NODE_IMAGE=node:24.18.0-alpine3.24
+ARG RUST_IMAGE=rust:1.96.1-alpine3.24
+
+FROM ${NODE_IMAGE} AS fe
 
 WORKDIR /builder
 
@@ -20,7 +23,7 @@ RUN npx ng build --base-href=${BASE_PATH}
 ############################################
 # 2) Backend build (Rust FIXED)
 ############################################
-FROM rust:1.96.0-alpine3.23 AS be
+FROM ${RUST_IMAGE} AS be
 
 WORKDIR /builder
 
@@ -54,8 +57,9 @@ RUN test -f target/release/gcd_api
 # 3) Certs
 ############################################
 FROM alpine:3.24.1 AS certs
-RUN apk update && apk upgrade --no-cache \
-    && apk add --no-cache ca-certificates tzdata
+RUN apk upgrade --no-cache \
+    && apk add --no-cache ca-certificates tzdata \
+    && update-ca-certificates
 
 
 ############################################

@@ -1,10 +1,11 @@
-import { FETCH_REFRESH_INTERVAL, retryConfig } from '$groups/http'
+import { pollWhenActive, retryConfig } from '$groups/http'
 import { Job, JobId } from '$groups/model/job'
 import { PipelineId } from '$groups/model/pipeline'
 import { ProjectId } from '$groups/model/project'
 import { Status } from '$groups/model/status'
+import { ErrorService } from '$service/error.service'
 import { CommonModule } from '@angular/common'
-import { HttpClient } from '@angular/common/http'
+import { HttpClient, HttpErrorResponse } from '@angular/common/http'
 import {
   ChangeDetectionStrategy,
   Component,
@@ -21,9 +22,10 @@ import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzSpinModule } from 'ng-zorro-antd/spin'
 import { NzTagModule } from 'ng-zorro-antd/tag'
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip'
-import { Subscription, identity, map, repeat, retry, tap } from 'rxjs'
+import { Subscription, catchError, identity, map, of, repeat, retry, take, tap } from 'rxjs'
 import { MaxLengthPipe } from '../../pipes/max-length.pipe'
 import { StatusColorPipe } from '../../pipes/status-color.pipe'
+import { openExternalUrl } from '$shared/external-url'
 
 interface Tag {
   job: Job
@@ -51,6 +53,7 @@ const RUNNABLE_STATUSES = [
 })
 export class JobsComponent implements OnChanges, OnDestroy {
   private http = inject(HttpClient)
+  private errorService = inject(ErrorService)
   private injector = inject(Injector)
   private subscription?: Subscription
 
@@ -80,7 +83,7 @@ export class JobsComponent implements OnChanges, OnDestroy {
 
   onActionClick(e: Event, { web_url }: Job): void {
     e.stopPropagation()
-    window.open(web_url, '_blank')
+    openExternalUrl(web_url)
   }
 
   private isSameArray<T>(a: T[], b: T[]): boolean {
@@ -99,7 +102,14 @@ export class JobsComponent implements OnChanges, OnDestroy {
       .get<Job[]>('/api/jobs', { params })
       .pipe(
         retry(retryConfig),
-        this.withRepeat() ? repeat({ delay: FETCH_REFRESH_INTERVAL }) : identity,
+        catchError((error: HttpErrorResponse) => {
+          this.errorService.setError({
+            statusCode: error.status,
+            message: error.error?.message ?? error.message
+          })
+          return of([] as Job[])
+        }),
+        this.withRepeat() ? repeat({ delay: () => pollWhenActive().pipe(take(1)) }) : identity,
         tap(() => this.loading.set(false)),
         map((jobs) => {
           return jobs.slice(0, MAX_JOB_COUNT).map((job) => {

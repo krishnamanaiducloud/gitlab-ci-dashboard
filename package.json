@@ -38,8 +38,6 @@
 
     "@fontsource/roboto": "5.2.10",
 
-    "file-saver": "2.0.5",
-
     "ng-zorro-antd": "21.3.2",
 
     "normalize.css": "8.0.1",
@@ -59,8 +57,6 @@
     "@angular/cli": "21.2.19",
 
     "@angular/compiler-cli": "21.2.18",
-
-    "@types/file-saver": "2.0.7",
 
     "@types/node": "26.1.1",
 

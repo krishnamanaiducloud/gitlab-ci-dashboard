@@ -1,7 +1,10 @@
 <button
+  type="button"
   nz-tooltip
   [nzTooltipMouseEnterDelay]="0.75"
   [nzTooltipTitle]="tooltipTitle()"
+  [attr.aria-label]="tooltipTitle()"
+  [attr.aria-pressed]="hasFavorite()"
   nz-button
   (click)="hasFavorite() ? remove($event) : add($event)"
 >

@@ -3,7 +3,7 @@ import { DownloadArtifactsIconComponent } from '$groups/group-tabs/feature-tabs/
 import { JobsComponent } from '$groups/group-tabs/feature-tabs/components/jobs/jobs.component'
 import { WriteActionsIconComponent } from '$groups/group-tabs/feature-tabs/components/write-actions-icon/write-actions-icon.component'
 import { CoverageColorPipe } from '$groups/group-tabs/feature-tabs/pipes/coverage-color.pipe'
-import { FETCH_REFRESH_INTERVAL } from '$groups/http'
+import { pollWhenActive } from '$groups/http'
 import { BranchPipeline } from '$groups/model/branch'
 import { Project, ProjectId, ProjectPipeline } from '$groups/model/project'
 import { Status } from '$groups/model/status'
@@ -30,7 +30,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzSpinModule } from 'ng-zorro-antd/spin'
 import { NzTableModule } from 'ng-zorro-antd/table'
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip'
-import { finalize, interval, Subscription, switchMap } from 'rxjs'
+import { finalize, Subscription, switchMap } from 'rxjs'
 import { OpenGitlabIconComponent } from '../../../components/open-gitlab-icon/open-gitlab-icon.component'
 import { LatestPipelineService } from '../../service/latest-pipeline.service'
 import { PipelineTableBranchComponent } from './pipeline-table-branch/pipeline-table-branch.component'
@@ -144,7 +144,7 @@ export class PipelineTableComponent implements OnDestroy {
         .pipe(finalize(() => this.branchesLoading.set(false)))
         .subscribe((branchPipelines) => this.branchPipelines.set(branchPipelines))
 
-      this.refreshSubscription = interval(FETCH_REFRESH_INTERVAL)
+      this.refreshSubscription = pollWhenActive()
         .pipe(
           takeUntilDestroyed(this.destroyRef),
           switchMap(() => this.latestPipelineService.getBranchesWithLatestPipeline(projectId))

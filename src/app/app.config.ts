@@ -1,6 +1,7 @@
 import { GroupTabsComponent } from '$groups/group-tabs/group-tabs.component';
 import { registerLocaleData } from '@angular/common';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { apiBaseInterceptor } from '$shared/api-base.interceptor';
 import en from '@angular/common/locales/en';
 import nl from '@angular/common/locales/nl';
 import {
@@ -38,7 +39,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideNoopAnimations(),
     provideZonelessChangeDetection(),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([apiBaseInterceptor])),
     provideRouter(routes, withHashLocation()),
 
     // ⭐ REGISTER ALL ICONS REQUIRED BY YOUR FILTERS

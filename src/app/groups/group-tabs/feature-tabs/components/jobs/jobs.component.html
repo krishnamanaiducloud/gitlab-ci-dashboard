@@ -5,7 +5,12 @@
     @for (tag of tags(); track trackById(tag.job)) {
       <nz-tag
         class="pointer"
+        role="link"
+        tabindex="0"
         (click)="onActionClick($event, tag.job)"
+        (keydown.enter)="onActionClick($event, tag.job)"
+        (keydown.space)="$event.preventDefault(); onActionClick($event, tag.job)"
+        [attr.aria-label]="'Open GitLab job ' + tag.job.name"
         [nzColor]="getStatus(tag.job) | statusColor"
         nz-tooltip
         [nzTooltipTitle]="'Show job (' + tag.job.name + ')'"

@@ -15,8 +15,7 @@ COPY angular.json ./
 COPY tsconfig*.json ./
 COPY proxy.conf.js ./
 COPY src ./src
-ARG BASE_PATH=/
-RUN npx ng build --base-href=${BASE_PATH}
+RUN npx ng build --base-href=./
 
 
 ############################################

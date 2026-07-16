@@ -1,4 +1,4 @@
-import { FETCH_REFRESH_INTERVAL } from '$groups/http'
+import { pollWhenActive } from '$groups/http'
 import { GroupId } from '$groups/model/group'
 import { ProjectId, ProjectPipeline } from '$groups/model/project'
 import { forkJoinFlatten } from '$groups/util/fork'
@@ -15,13 +15,14 @@ import {
 } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { NzSpinModule } from 'ng-zorro-antd/spin'
-import { finalize, interval, switchMap } from 'rxjs'
+import { finalize, switchMap } from 'rxjs'
 import { JobFilterComponent } from '../components/job-filter/job-filter.component'
 import { ProjectFilterComponent } from '../components/project-filter/project-filter.component'
 import { TopicFilterComponent } from '../components/topic-filter/topic-filter.component'
 import { PipelineStatusTabsComponent } from './pipeline-status-tabs/pipeline-status-tabs.component'
 import { LatestPipelineService } from './service/latest-pipeline.service'
 import { TextFilterComponent } from '../components/text-filter/text-filter.component'
+import { downloadCsv } from '$shared/csv'
 
 @Component({
   selector: 'gcd-latest-pipelines',
@@ -77,7 +78,7 @@ export class LatestPipelinesComponent implements OnInit {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe((p) => this.projectPipelines.set(p))
 
-    interval(FETCH_REFRESH_INTERVAL)
+    pollWhenActive()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         switchMap(() =>
@@ -100,31 +101,14 @@ export class LatestPipelinesComponent implements OnInit {
 
   // EXPORT CSV
   exportCsv() {
-    const rows = this.projectPipelines().map(p => ({
-      project: p.project.name,
-      group: p.project.namespace.name,
-      branch: p.project.default_branch ?? '',
-      trigger: p.pipeline?.source ?? '',
-      last_run: p.pipeline?.updated_at ?? ''
-    }))
+    const rows = this.projectPipelines().map((item) => [
+      item.project.name,
+      item.project.namespace.name,
+      item.project.default_branch ?? '',
+      item.pipeline?.source ?? '',
+      item.pipeline?.updated_at ?? ''
+    ])
 
-    const esc = (v: string) => /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v
-
-    const csv = [
-      'Project,Group,Branch,Trigger,Last Run',
-      ...rows.map(r =>
-        [r.project, r.group, r.branch, r.trigger, r.last_run].map(v => esc(String(v))).join(',')
-      )
-    ].join('\n')
-
-    const blob = new Blob([csv], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'latest-pipelines.csv'
-    a.click()
-
-    URL.revokeObjectURL(url)
+    downloadCsv('latest-pipelines.csv', ['Project', 'Group', 'Branch', 'Trigger', 'Last Run'], rows)
   }
 }

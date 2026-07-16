@@ -117,7 +117,9 @@ impl GitlabClient {
         let url = Url::parse_with_params(format!("{}{}", self.base_url, path).as_str(), params)
             .expect("url to be parsed with params");
 
-        log::debug!("request (post) {url} body: {body_json:?}");
+        // Pipeline variables may contain credentials. Record request metadata,
+        // never the request body or token, even at debug level.
+        log::debug!("request (post) {url} body_present: {}", body_json.is_some());
         let builder = self.http_client.post(url);
 
         match body_json {
@@ -135,7 +137,7 @@ impl GitlabClient {
         let response = self.do_post(path.clone(), params, body_json).await?;
         let json = response.text().await?;
 
-        log::debug!("path: {}, JSON response: {}", &path, &json);
+        log::debug!("path: {}, response bytes: {}", &path, json.len());
 
         let data =
             serde_json::from_str(&json).map_err(|e| ApiError::server_error(e.to_string()))?;
@@ -164,7 +166,7 @@ impl GitlabClient {
         let response = self.do_get(path.clone(), params).await?;
         let json = response.text().await?;
 
-        log::debug!("path: {}, JSON response: {}", &path, &json);
+        log::debug!("path: {}, response bytes: {}", &path, json.len());
 
         let data =
             serde_json::from_str(&json).map_err(|e| ApiError::server_error(e.to_string()))?;
@@ -185,7 +187,12 @@ impl GitlabClient {
         let total_pages = get_total_pages(response.headers());
         let json = response.text().await?;
 
-        log::debug!("page: {}, path: {}, JSON response: {}", page, &path, &json);
+        log::debug!(
+            "page: {}, path: {}, response bytes: {}",
+            page,
+            &path,
+            json.len()
+        );
         let data =
             serde_json::from_str(&json).map_err(|e| ApiError::server_error(e.to_string()))?;
 

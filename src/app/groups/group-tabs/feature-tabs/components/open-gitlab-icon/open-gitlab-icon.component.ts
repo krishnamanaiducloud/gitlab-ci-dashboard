@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core'
 import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip'
+import { openExternalUrl } from '$shared/external-url'
 
 @Component({
   selector: 'gcd-open-gitlab-icon',
@@ -16,6 +17,6 @@ export class OpenGitlabIconComponent {
 
   onClick(e: MouseEvent) {
     e.stopPropagation()
-    window.open(this.url(), '_blank')
+    openExternalUrl(this.url())
   }
 }

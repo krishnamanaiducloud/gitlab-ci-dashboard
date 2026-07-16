@@ -8,7 +8,16 @@
   </div>
   <div class="header-actions">
     <span class="version-pill">{{ version() }}</span>
-    <button class="github-button" nzType="text" nz-button nz-tooltip nzTooltipTitle="View on GitHub" (click)="onClick()">
+    <button
+      type="button"
+      class="github-button"
+      nzType="text"
+      nz-button
+      nz-tooltip
+      nzTooltipTitle="View on GitHub"
+      aria-label="View project on GitHub"
+      (click)="onClick()"
+    >
       <span nz-icon nzType="github"></span>
     </button>
   </div>

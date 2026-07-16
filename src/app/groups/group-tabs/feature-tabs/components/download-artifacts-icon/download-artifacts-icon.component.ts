@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common'
 import { HttpClient, HttpErrorResponse, HttpStatusCode } from '@angular/common/http'
 import { ChangeDetectionStrategy, Component, HostListener, inject, Injector, input, signal } from '@angular/core'
 import { toObservable, toSignal } from '@angular/core/rxjs-interop'
-import FileSaver from 'file-saver'
+import { downloadBlob } from '$shared/download'
 import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown'
 import { NzIconModule } from 'ng-zorro-antd/icon'
@@ -66,7 +66,7 @@ export class DownloadArtifactsIconComponent {
       .get('/api/artifacts', { params, responseType: 'blob' })
       .pipe(finalize(() => this.loadingJobIds.set(this.loadingJobIds().filter((jobId) => jobId !== id))))
       .subscribe({
-        next: (blob) => FileSaver.saveAs(blob, `${name}_${id}.zip`),
+        next: (blob) => downloadBlob(blob, `${name}_${id}.zip`),
         error: ({ status, error }: HttpErrorResponse) => {
           if (status === HttpStatusCode.NotFound) {
             this.notification.error('Not Found', `Failed to download artifact, it's missing from the server`)

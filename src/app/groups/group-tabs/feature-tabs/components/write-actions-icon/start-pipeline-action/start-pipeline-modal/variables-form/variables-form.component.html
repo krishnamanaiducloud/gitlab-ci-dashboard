@@ -4,9 +4,16 @@
       <nz-form-item [formGroupName]="$index">
         <nz-form-control>
           <div class="flex gap-025 items-center">
-            <input nz-input placeholder="key" formControlName="key" />
-            <input nz-input placeholder="value" formControlName="value" />
-            <span nz-icon nzType="minus-circle-o" (click)="removeVariables($index, $event)"></span>
+            <input nz-input placeholder="key" [attr.aria-label]="'Variable ' + ($index + 1) + ' key'" formControlName="key" />
+            <input nz-input placeholder="value" [attr.aria-label]="'Variable ' + ($index + 1) + ' value'" formControlName="value" />
+            <button
+              type="button"
+              class="icon-button"
+              nz-icon
+              nzType="minus-circle-o"
+              [attr.aria-label]="'Remove variable ' + ($index + 1)"
+              (click)="removeVariables($index, $event)"
+            ></button>
           </div>
         </nz-form-control>
       </nz-form-item>
@@ -14,7 +21,7 @@
     @if (canAddVariables) {
       <nz-form-item>
         <nz-form-control>
-          <button nz-button nzType="dashed" (click)="addVariables($event)">
+          <button type="button" nz-button nzType="dashed" (click)="addVariables($event)">
             <span nz-icon nzType="plus"></span>
             Add variables
           </button>

@@ -21,7 +21,17 @@
       [attr.data-pipeline-id]="data.pipeline?.id"
       (click)="onRowClick(data.project)"
     >
-      <td>{{ data.project.name }}</td>
+      <td>
+        <button
+          type="button"
+          class="table-row-toggle"
+          [attr.aria-expanded]="data.project.id === selectedProjectId()"
+          [attr.aria-label]="'Toggle scheduled pipelines for ' + data.project.name"
+          (click)="$event.stopPropagation(); onRowClick(data.project)"
+        >
+          {{ data.project.name }}
+        </button>
+      </td>
       <td>{{ data.project.namespace.name }}</td>
       <td class="lowercase">{{ data.schedule.description }}</td>
       <td>
@@ -73,7 +83,7 @@
 
         <gcd-download-artifacts-icon [projectId]="data.project.id" [pipelineId]="pipeline.id" />
         } @else {
-        <button nzType="text" nz-button nzShape="circle" disabled>
+        <button type="button" nzType="text" nz-button nzShape="circle" aria-label="No GitLab pipeline available" disabled>
           <span nz-icon nzType="gitlab"></span>
         </button>
 
@@ -81,9 +91,11 @@
         }
 
         <button
+          type="button"
           (click)="onScheduleClick($event, data.project)"
           nz-tooltip
           [nzTooltipTitle]="'Show schedules (' + data.project.name + ')'"
+          [attr.aria-label]="'Show schedules for ' + data.project.name"
           nz-button
         >
           <span nz-icon nzType="schedule"></span>

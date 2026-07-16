@@ -5,6 +5,7 @@ import { ConfigService } from '$service/config.service'
 import { Component, inject } from '@angular/core'
 import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzIconModule } from 'ng-zorro-antd/icon'
+import { openExternalUrl } from '$shared/external-url'
 
 @Component({
   selector: 'gcd-header',
@@ -17,6 +18,6 @@ export class HeaderComponent {
   readonly version = this.config.version
 
   onClick(): void {
-    window.open('https://github.com/', '_blank')
+    openExternalUrl('https://github.com/')
   }
 }

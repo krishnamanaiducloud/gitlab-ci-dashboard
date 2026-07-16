@@ -18,7 +18,17 @@
       [attr.data-pipeline-id]="data.pipeline?.id"
       (click)="onRowClick(data.project)"
     >
-      <td>{{ data.project.name }}</td>
+      <td>
+        <button
+          type="button"
+          class="table-row-toggle"
+          [attr.aria-expanded]="data.project.id === selectedProjectId()"
+          [attr.aria-label]="'Toggle branches for ' + data.project.name"
+          (click)="$event.stopPropagation(); onRowClick(data.project)"
+        >
+          {{ data.project.name }}
+        </button>
+      </td>
       <td>{{ data.project.namespace.name }}</td>
       <td>{{ data.project.default_branch }}</td>
       <td class="lowercase">{{ data.project.topics.length ? data.project.topics.join(',') : '-' }}</td>

@@ -5,6 +5,7 @@
         type="text"
         nz-input
         autocomplete="off"
+        [attr.aria-label]="placeholder || 'Filter results'"
         [placeholder]="placeholder"
         [ngModel]="filterText"
         (ngModelChange)="update($event)"
@@ -12,15 +13,17 @@
     </nz-input-group>
 
     <ng-template #suffixIcon>
-      <span
-        class="pointer"
+      <button
+        type="button"
+        class="icon-button pointer"
         nz-icon
         nzType="close-square"
         nz-tooltip
         [nzTooltipMouseEnterDelay]="1"
         nzTooltipTitle="Clear field"
+        aria-label="Clear filter"
         (click)="clear()"
-      ></span>
+      ></button>
     </ng-template>
   </div>
 </div>

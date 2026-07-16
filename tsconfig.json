@@ -33,6 +33,9 @@
       "$service/*": [
         "src/app/service/*"
       ],
+      "$shared/*": [
+        "src/app/shared/*"
+      ],
       "$store/*": [
         "src/app/store/*"
       ]

@@ -1,4 +1,5 @@
 <button
+  type="button"
   nz-button
   nz-tooltip
   nz-dropdown
@@ -7,13 +8,15 @@
   [nzClickHide]="true"
   [nzDropdownMenu]="menu"
   [nzTooltipTitle]="tooltipTitle()"
+  [attr.aria-label]="tooltipTitle()"
+  [attr.aria-expanded]="visible()"
   [(nzVisible)]="visible"
   [disabled]="readOnly()"
 >
   <nz-icon nzType="ellipsis" />
 </button>
 <nz-dropdown-menu #menu>
-  <ul nz-menu>
+  <ul nz-menu aria-label="Pipeline actions">
     <li nz-menu-item>
       <gcd-start-pipeline-action (click)="visible.set(false)" [projectId]="projectId()" [branch]="branch()" />
     </li>

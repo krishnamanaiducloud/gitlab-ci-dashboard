@@ -4,8 +4,12 @@ use crate::config::config_file;
 use crate::gitlab::GitlabClient;
 use crate::spa::Spa;
 use actix_web::dev::HttpServiceFactory;
+use actix_web::http::header;
 use actix_web::web::{Data, ServiceConfig};
-use actix_web::{middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{
+    middleware::{DefaultHeaders, Logger},
+    web, App, HttpRequest, HttpResponse, HttpServer, Responder,
+};
 use actix_web_prom::{PrometheusMetrics, PrometheusMetricsBuilder};
 use config::config_app;
 use dotenvy::dotenv;
@@ -112,6 +116,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(Logger::default())
             .wrap(prom.clone())
+            .wrap(security_headers())
             .configure(configure_app(
                 api_config.clone(),
                 qs_config.clone(),
@@ -175,6 +180,7 @@ fn configure_app(
                 .service(api_scope)
                 .service(setup_spa());
         } else {
+            config.route(&base_path, web::get().to(redirect_to_trailing_slash));
             config.service(
                 scope(&base_path)
                     .app_data(api_config)
@@ -197,6 +203,43 @@ fn configure_app(
 
 async fn health_handler() -> impl Responder {
     HttpResponse::Ok().finish()
+}
+
+async fn redirect_to_trailing_slash(request: HttpRequest) -> impl Responder {
+    HttpResponse::PermanentRedirect()
+        .insert_header((header::LOCATION, format!("{}/", request.path())))
+        .finish()
+}
+
+fn security_headers() -> DefaultHeaders {
+    DefaultHeaders::new()
+        .add((header::X_CONTENT_TYPE_OPTIONS, "nosniff"))
+        .add((header::X_FRAME_OPTIONS, "DENY"))
+        .add((header::REFERRER_POLICY, "no-referrer"))
+        .add((
+            header::CONTENT_SECURITY_POLICY,
+            "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self' blob:; frame-src 'none'",
+        ))
+        .add((
+            header::STRICT_TRANSPORT_SECURITY,
+            "max-age=31536000",
+        ))
+        .add((
+            header::HeaderName::from_static("permissions-policy"),
+            "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+        ))
+        .add((
+            header::HeaderName::from_static("cross-origin-opener-policy"),
+            "same-origin",
+        ))
+        .add((
+            header::HeaderName::from_static("cross-origin-resource-policy"),
+            "same-origin",
+        ))
+        .add((
+            header::HeaderName::from_static("x-permitted-cross-domain-policies"),
+            "none",
+        ))
 }
 
 fn setup_prometheus() -> PrometheusMetrics {
@@ -238,6 +281,9 @@ mod tests {
     #[macro_export]
     macro_rules! setup_app {
         () => {{
+            setup_app!(String::default())
+        }};
+        ($base_path:expr) => {{
             use super::*;
             use actix_web::{test, App};
 
@@ -294,7 +340,7 @@ mod tests {
                 job_service.get_ref().clone(),
             ));
 
-            test::init_service(App::new().configure(configure_app(
+            test::init_service(App::new().wrap(security_headers()).configure(configure_app(
                 api_config,
                 qs_config,
                 group_service,
@@ -305,7 +351,7 @@ mod tests {
                 pipeline_service,
                 branch_service,
                 artifact_service,
-                String::default(),
+                $base_path,
             )))
             .await
         }};
@@ -422,6 +468,71 @@ mod tests {
         let resp = test::call_service(&app, req).await;
 
         assert!(resp.status().is_success());
+    }
+
+    #[actix_web::test]
+    async fn test_security_headers() {
+        let app = setup_app!();
+        let req = test::TestRequest::get().uri("/health").to_request();
+        let resp = test::call_service(&app, req).await;
+
+        assert_eq!(
+            resp.headers()
+                .get(header::CONTENT_SECURITY_POLICY)
+                .and_then(|value| value.to_str().ok()),
+            Some("default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self' blob:; frame-src 'none'")
+        );
+        assert_eq!(
+            resp.headers()
+                .get(header::X_CONTENT_TYPE_OPTIONS)
+                .and_then(|value| value.to_str().ok()),
+            Some("nosniff")
+        );
+    }
+
+    #[actix_web::test]
+    async fn test_arbitrary_prefixed_api_and_trailing_slash_redirect() {
+        let app = setup_app!("/operations/pipeline-console".to_string());
+
+        let redirect = test::TestRequest::get()
+            .uri("/operations/pipeline-console")
+            .to_request();
+        let redirect = test::call_service(&app, redirect).await;
+        assert_eq!(
+            redirect.status(),
+            actix_web::http::StatusCode::PERMANENT_REDIRECT
+        );
+        assert_eq!(
+            redirect
+                .headers()
+                .get(header::LOCATION)
+                .and_then(|value| value.to_str().ok()),
+            Some("/operations/pipeline-console/")
+        );
+
+        let api = test::TestRequest::get()
+            .uri("/operations/pipeline-console/api/config")
+            .to_request();
+        let api = test::call_service(&app, api).await;
+        assert!(api.status().is_success());
+    }
+
+    #[actix_web::test]
+    async fn test_second_nested_runtime_prefix_without_rebuild() {
+        let app = setup_app!("/platform/tools/ci".to_string());
+
+        let api = test::TestRequest::get()
+            .uri("/platform/tools/ci/api/config")
+            .to_request();
+        let api = test::call_service(&app, api).await;
+        assert!(api.status().is_success());
+
+        let unprefixed_api = test::TestRequest::get().uri("/api/config").to_request();
+        let unprefixed_api = test::call_service(&app, unprefixed_api).await;
+        assert_eq!(
+            unprefixed_api.status(),
+            actix_web::http::StatusCode::NOT_FOUND
+        );
     }
 
     #[actix_web::test]

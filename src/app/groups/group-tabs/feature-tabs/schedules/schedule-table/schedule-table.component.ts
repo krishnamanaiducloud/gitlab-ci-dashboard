@@ -1,6 +1,6 @@
 import { FavoritesIconComponent } from '$groups/group-tabs/favorites/favorites-icon/favorites-icon.component'
 import { StatusColorPipe } from '$groups/group-tabs/feature-tabs/pipes/status-color.pipe'
-import { FETCH_REFRESH_INTERVAL } from '$groups/http'
+import { pollWhenActive } from '$groups/http'
 import { Pipeline, Source } from '$groups/model/pipeline'
 import { Project } from '$groups/model/project'
 import { ScheduleId, ScheduleProjectPipeline } from '$groups/model/schedule'
@@ -28,7 +28,7 @@ import { NzI18nService } from 'ng-zorro-antd/i18n'
 import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzTableModule } from 'ng-zorro-antd/table'
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip'
-import { finalize, interval, map, Subscription, switchMap } from 'rxjs'
+import { finalize, map, Subscription, switchMap } from 'rxjs'
 import { DownloadArtifactsIconComponent } from '../../components/download-artifacts-icon/download-artifacts-icon.component'
 import { JobsComponent } from '../../components/jobs/jobs.component'
 import { OpenGitlabIconComponent } from '../../components/open-gitlab-icon/open-gitlab-icon.component'
@@ -37,6 +37,7 @@ import { PipelinesService } from '../../pipelines/service/pipelines.service'
 import { CoverageColorPipe } from '../../pipes/coverage-color.pipe'
 import { NextRunAtPipe } from './pipes/next-run-at.pipe'
 import { SchedulePipelineTableComponent } from './schedule-pipeline-table/schedule-pipeline-table.component'
+import { openExternalUrl } from '$shared/external-url'
 
 const headers: Header<ScheduleProjectPipeline>[] = [
   { title: 'Project', sortable: true, compare: (a, b) => compareString(a.project.name, b.project.name) },
@@ -141,7 +142,7 @@ export class ScheduleTableComponent implements OnDestroy {
 
   onScheduleClick(e: Event, { web_url }: Project): void {
     e.stopPropagation()
-    window.open(`${web_url}/-/pipeline_schedules`, '_blank')
+    openExternalUrl(`${web_url}/-/pipeline_schedules`)
   }
 
   onRowClick({ id: projectId }: Project) {
@@ -161,7 +162,7 @@ export class ScheduleTableComponent implements OnDestroy {
 
       source$.pipe(finalize(() => this.loading.set(false))).subscribe((pipelines) => this.pipelines.set(pipelines))
 
-      this.refreshSubscription = interval(FETCH_REFRESH_INTERVAL)
+      this.refreshSubscription = pollWhenActive()
         .pipe(
           takeUntilDestroyed(this.destroyRef),
           switchMap(() => source$)

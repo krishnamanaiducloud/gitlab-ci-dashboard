@@ -4,18 +4,21 @@
       type="text"
       [(ngModel)]="filterText"
       nz-input
+      aria-label="Filter branches"
       [placeholder]="branchCount() > 0 ? 'Search ' + branchCount() + ' branches...' : 'Search branches...'"
     />
   </nz-input-group>
   <ng-template #suffixIcon>
-    <span
-      class="pointer"
+    <button
+      type="button"
+      class="icon-button pointer"
       nz-icon
       nzType="close-square"
       nz-tooltip
       [nzTooltipMouseEnterDelay]="1"
       nzTooltipTitle="Clear field"
+      aria-label="Clear branch filter"
       (click)="filterText.set('')"
-    ></span>
+    ></button>
   </ng-template>
 </div>

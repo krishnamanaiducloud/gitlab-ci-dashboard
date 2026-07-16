@@ -5,19 +5,22 @@
         type="text"
         [(ngModel)]="filterText"
         nz-input
+        aria-label="Filter projects"
         [placeholder]="projectCount() > 0 ? 'Search ' + projectCount() + ' projects...' : 'Search projects...'"
       />
     </nz-input-group>
     <ng-template #suffixIcon>
-      <span
-        class="pointer"
+      <button
+        type="button"
+        class="icon-button pointer"
         nz-icon
         nzType="close-square"
         nz-tooltip
         [nzTooltipMouseEnterDelay]="1"
         nzTooltipTitle="Clear field"
+        aria-label="Clear project filter"
         (click)="filterText.set('')"
-      ></span>
+      ></button>
     </ng-template>
   </div>
 </div>

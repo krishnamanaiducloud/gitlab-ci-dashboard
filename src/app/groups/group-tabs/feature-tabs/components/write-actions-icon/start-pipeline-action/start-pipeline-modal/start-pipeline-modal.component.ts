@@ -1,4 +1,3 @@
-import { retryConfig } from '$groups/http'
 import { ProjectId } from '$groups/model/project'
 import { BranchService } from '$groups/service/branch.service'
 import { CommonModule } from '@angular/common'
@@ -13,7 +12,7 @@ import { NzModalModule, NzModalRef } from 'ng-zorro-antd/modal'
 import { NzNotificationService } from 'ng-zorro-antd/notification'
 import { NzSelectModule } from 'ng-zorro-antd/select'
 import { NzSpaceModule } from 'ng-zorro-antd/space'
-import { finalize, map, retry } from 'rxjs'
+import { finalize, map } from 'rxjs'
 import { VariablesFormComponent } from './variables-form/variables-form.component'
 
 export interface ModalData {
@@ -74,10 +73,7 @@ export class StartPipelineModalComponent {
         branch: this.selectedBranch,
         env_vars: Object.keys(variables).length > 0 ? variables : undefined
       })
-      .pipe(
-        retry(retryConfig),
-        finalize(() => loadingIcon.set(false))
-      )
+      .pipe(finalize(() => loadingIcon.set(false)))
       .subscribe({
         complete: () => {
           this.notification.success('Success', 'Started new pipeline.')

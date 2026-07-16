@@ -68,9 +68,12 @@
             <gcd-download-artifacts-icon [projectId]="data.project.id" [pipelineId]="pipeline.id" />
 
             <button
+              type="button"
               nz-tooltip
               [nzTooltipMouseEnterDelay]="0.75"
               [nzTooltipTitle]="isPinned(pipeline.id) ? 'Unpin pipeline' : 'Pin pipeline'"
+              [attr.aria-label]="isPinned(pipeline.id) ? 'Unpin pipeline' : 'Pin pipeline'"
+              [attr.aria-pressed]="isPinned(pipeline.id)"
               nz-button
               (click)="onPinClick($event, pipeline)"
             >

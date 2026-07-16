@@ -18,9 +18,8 @@ COPY tsconfig*.json ./
 COPY proxy.conf.js ./
 COPY src ./src
 
-# Build Angular (BASE_PATH for Istio VirtualService path-based routing)
-ARG BASE_PATH=/
-RUN npx ng build --base-href=${BASE_PATH}
+# Relative assets let one image run at / or a runtime-configured path prefix.
+RUN npx ng build --base-href=./
 
 
 ############################################

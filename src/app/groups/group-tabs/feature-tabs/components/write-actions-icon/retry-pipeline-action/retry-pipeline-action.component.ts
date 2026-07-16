@@ -1,4 +1,3 @@
-import { retryConfig } from '$groups/http'
 import { PipelineId } from '$groups/model/pipeline'
 import { ProjectId } from '$groups/model/project'
 import { CommonModule } from '@angular/common'
@@ -7,7 +6,7 @@ import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angu
 import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzNotificationService } from 'ng-zorro-antd/notification'
-import { finalize, retry } from 'rxjs'
+import { finalize } from 'rxjs'
 
 @Component({
   selector: 'gcd-retry-pipeline-action',
@@ -32,10 +31,7 @@ export class RetryPipelineActionComponent {
 
     this.http
       .post('/api/pipelines/retry', null, { params })
-      .pipe(
-        retry(retryConfig),
-        finalize(() => this.loading.set(false))
-      )
+      .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         complete: () => this.notification.success('Success', 'Restarted pipeline.'),
         error: ({ status, error }: HttpErrorResponse) => {

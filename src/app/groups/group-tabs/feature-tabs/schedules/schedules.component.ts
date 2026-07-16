@@ -1,4 +1,4 @@
-import { FETCH_REFRESH_INTERVAL } from '$groups/http'
+import { pollWhenActive } from '$groups/http'
 import { GroupId } from '$groups/model/group'
 import { ProjectId } from '$groups/model/project'
 import { ScheduleProjectPipeline } from '$groups/model/schedule'
@@ -9,13 +9,14 @@ import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, input, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { NzSpinModule } from 'ng-zorro-antd/spin'
-import { finalize, interval, switchMap } from 'rxjs'
+import { finalize, switchMap } from 'rxjs'
 import { JobFilterComponent } from '../components/job-filter/job-filter.component'
 import { ProjectFilterComponent } from '../components/project-filter/project-filter.component'
 import { TopicFilterComponent } from '../components/topic-filter/topic-filter.component'
 import { TextFilterComponent } from '../components/text-filter/text-filter.component'
 import { ScheduleTableComponent } from './schedule-table/schedule-table.component'
 import { ScheduleService } from './service/schedule.service'
+import { downloadCsv } from '$shared/csv'
 
 @Component({
   selector: 'gcd-schedules',
@@ -90,7 +91,7 @@ export class SchedulesComponent implements OnInit {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe((result) => this.schedulePipelines.set(result))
 
-    interval(FETCH_REFRESH_INTERVAL)
+    pollWhenActive()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         switchMap(() =>
@@ -112,30 +113,15 @@ export class SchedulesComponent implements OnInit {
   onFilterJobsChanged(v: string[]) { this.filterJobs.set(v) }
 
   exportCsv() {
-    const rows = this.filteredSchedulePipelines().map(p => ({
-      project: p.project.name,
-      group: p.project.namespace.name,
-      branch: p.pipeline?.ref ?? '',
-      trigger: p.pipeline?.source ?? '',
-      status: p.pipeline?.status ?? ''
-    }))
+    const rows = this.filteredSchedulePipelines().map((item) => [
+      item.project.name,
+      item.project.namespace.name,
+      item.pipeline?.ref ?? '',
+      item.pipeline?.source ?? '',
+      item.pipeline?.status ?? ''
+    ])
 
-    const csv = [
-      'Project,Group,Branch,Trigger,Status',
-      ...rows.map(r =>
-        `${r.project},${r.group},${r.branch},${r.trigger},${r.status}`
-      )
-    ].join('\n')
-
-    const blob = new Blob([csv], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'schedules.csv'
-    a.click()
-
-    URL.revokeObjectURL(url)
+    downloadCsv('schedules.csv', ['Project', 'Group', 'Branch', 'Trigger', 'Status'], rows)
   }
 }
 

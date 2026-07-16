@@ -1,7 +1,9 @@
 <button
+  type="button"
   nz-button
   nz-tooltip
   nzTooltipTitle="Download artifacts"
+  aria-label="Download artifacts"
   nz-dropdown
   nzTrigger="click"
   [nzClickHide]="false"
@@ -15,6 +17,7 @@
     @for (job of jobs(); track job.id) {
       <li nz-menu-item>
         <button
+          type="button"
           [nzLoading]="isLoading(job.id)"
           (click)="download($event, job)"
           [style.color]="job.status | statusColor"

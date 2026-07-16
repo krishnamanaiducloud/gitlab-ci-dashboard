@@ -1,4 +1,4 @@
-import { FETCH_REFRESH_INTERVAL } from '$groups/http'
+import { pollWhenActive } from '$groups/http'
 import { GroupId } from '$groups/model/group'
 import { PipelineId } from '$groups/model/pipeline'
 import { ProjectId, ProjectPipeline, ProjectPipelines } from '$groups/model/project'
@@ -8,13 +8,14 @@ import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, input, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { NzSpinModule } from 'ng-zorro-antd/spin'
-import { finalize, interval, switchMap } from 'rxjs'
+import { finalize, switchMap } from 'rxjs'
 import { ProjectFilterComponent } from '../components/project-filter/project-filter.component'
 import { TopicFilterComponent } from '../components/topic-filter/topic-filter.component'
 import { BranchFilterComponent } from './components/branch-filter/branch-filter.component'
 import { TextFilterComponent } from '../components/text-filter/text-filter.component'
 import { PipelineTableComponent } from './pipeline-table/pipeline-table.component'
 import { PipelinesService } from './service/pipelines.service'
+import { downloadCsv } from '$shared/csv'
 
 const STORAGE_KEY = 'pinned_pipelines'
 
@@ -99,7 +100,7 @@ export class PipelinesComponent implements OnInit {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe(p => this.projectPipelines.set(p))
 
-    interval(FETCH_REFRESH_INTERVAL)
+    pollWhenActive()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         switchMap(() =>
@@ -125,31 +126,16 @@ export class PipelinesComponent implements OnInit {
   }
 
   exportCsv() {
-    const rows = this.filteredProjectPipelines().map(p => ({
-      project: p.project.name,
-      group: p.project.namespace.name,
-      branch: p.pipeline.ref,
-      trigger: p.pipeline.source,
-      status: p.pipeline.status,
-      last_run: p.pipeline.updated_at
-    }))
+    const rows = this.filteredProjectPipelines().map((item) => [
+      item.project.name,
+      item.project.namespace.name,
+      item.pipeline.ref,
+      item.pipeline.source,
+      item.pipeline.status,
+      item.pipeline.updated_at
+    ])
 
-    const csv = [
-      'Project,Group,Branch,Trigger,Status,Last Run',
-      ...rows.map(r =>
-        `${r.project},${r.group},${r.branch},${r.trigger},${r.status},${r.last_run}`
-      )
-    ].join('\n')
-
-    const blob = new Blob([csv], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'pipelines.csv'
-    a.click()
-
-    URL.revokeObjectURL(url)
+    downloadCsv('pipelines.csv', ['Project', 'Group', 'Branch', 'Trigger', 'Status', 'Last Run'], rows)
   }
 
   private savePinnedPipelines(v: PipelineId[]) {

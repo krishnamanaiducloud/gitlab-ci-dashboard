@@ -1,8 +1,8 @@
 ############################################
 # 1) Frontend build (Angular - optimized)
 ############################################
-ARG NODE_IMAGE=node:24.18.0-alpine3.24
-ARG RUST_IMAGE=rust:1.96.1-alpine3.24
+ARG NODE_IMAGE=node:24.18.0-alpine3.24@sha256:a0b9bf06e4e6193cf7a0f58816cc935ff8c2a908f81e6f1a95432d679c54fbfd
+ARG RUST_IMAGE=rust:1.96.1-alpine3.24@sha256:a41f7740f8b45d45795624eec13a8b42263cc700f19f7e4e86e04d3dda08a479
 
 FROM ${NODE_IMAGE} AS fe
 
@@ -33,9 +33,10 @@ WORKDIR /builder
 # Install build dependencies
 RUN apk add --no-cache \
     build-base \
+    cmake \
+    perl \
     pkgconfig \
-    openssl-dev \
-    openssl-libs-static
+    linux-headers
 
 # -------------------------------
 # Step 1: Cache dependencies
@@ -64,7 +65,7 @@ RUN test -f target/release/gcd_api
 ############################################
 # 3) Certs + timezone
 ############################################
-FROM alpine:3.24.1 AS certs
+FROM alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b AS certs
 
 RUN apk upgrade --no-cache \
     && apk add --no-cache ca-certificates tzdata \
@@ -74,7 +75,7 @@ RUN apk upgrade --no-cache \
 ############################################
 # 4) Runtime (OpenShift compliant)
 ############################################
-FROM gcr.io/distroless/static-debian12:nonroot
+FROM gcr.io/distroless/static-debian13:nonroot@sha256:f7f8f729987ad0fdf6b05eeeae94b26e6a0f613bdf46feea7fc40f7bd72953e6
 
 WORKDIR /app
 

@@ -8,7 +8,7 @@ use actix_web::web::{Data, ServiceConfig};
 use actix_web::{middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
 use actix_web_prom::{PrometheusMetrics, PrometheusMetricsBuilder};
 use config::config_app;
-use dotenv::dotenv;
+use dotenvy::dotenv;
 use serde_querystring_actix::{ParseMode, QueryStringConfig};
 use std::sync::Arc;
 use web::scope;
@@ -43,7 +43,14 @@ async fn main() -> std::io::Result<()> {
     let api_config = config_app::ApiConfig::from_file_config(file_config);
 
     log::info!("Gitlab CI Dashboard :: {} ::", &api_config.api_version);
-    log::info!("Base path: '{}'", if app_config.base_path.is_empty() { "/" } else { &app_config.base_path });
+    log::info!(
+        "Base path: '{}'",
+        if app_config.base_path.is_empty() {
+            "/"
+        } else {
+            &app_config.base_path
+        }
+    );
 
     log::debug!("{app_config:?}");
     log::debug!("{api_config:?}");

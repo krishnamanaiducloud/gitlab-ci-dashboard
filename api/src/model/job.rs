@@ -2,8 +2,8 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
 use crate::model::commit::Commit;
-use crate::model::Pipeline;
 use crate::model::user::User;
+use crate::model::Pipeline;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Job {
@@ -68,7 +68,7 @@ impl JobStatus {
 mod tests {
     use serde_json::json;
 
-    use crate::model::{Job, JobStatus, test};
+    use crate::model::{test, Job, JobStatus};
 
     #[test]
     fn job_deserialize() {

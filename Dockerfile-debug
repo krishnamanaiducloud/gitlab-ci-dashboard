@@ -1,8 +1,8 @@
 ############################################
 # 1) Frontend build (Angular)
 ############################################
-ARG NODE_IMAGE=node:24.18.0-alpine3.24
-ARG RUST_IMAGE=rust:1.96.1-alpine3.24
+ARG NODE_IMAGE=node:24.18.0-alpine3.24@sha256:a0b9bf06e4e6193cf7a0f58816cc935ff8c2a908f81e6f1a95432d679c54fbfd
+ARG RUST_IMAGE=rust:1.96.1-alpine3.24@sha256:a41f7740f8b45d45795624eec13a8b42263cc700f19f7e4e86e04d3dda08a479
 
 FROM ${NODE_IMAGE} AS fe
 
@@ -11,7 +11,10 @@ WORKDIR /builder
 COPY package*.json ./
 RUN npm ci --legacy-peer-deps --ignore-scripts
 
-COPY . .
+COPY angular.json ./
+COPY tsconfig*.json ./
+COPY proxy.conf.js ./
+COPY src ./src
 ARG BASE_PATH=/
 RUN npx ng build --base-href=${BASE_PATH}
 
@@ -25,21 +28,26 @@ WORKDIR /builder
 
 RUN apk add --no-cache \
     build-base \
+    cmake \
+    perl \
     pkgconfig \
-    openssl-dev \
-    openssl-libs-static
+    linux-headers
 
-COPY api ./api
-
+COPY api/Cargo.toml api/Cargo.lock ./api/
 WORKDIR /builder/api
 
+RUN mkdir -p src && echo "fn main() {}" > src/main.rs
 RUN cargo build --release
+
+COPY api/src ./src
+RUN touch src/main.rs && cargo build --release
+RUN test -f target/release/gcd_api
 
 
 ############################################
 # 3) Runtime image (Alpine + debug tools, non-root, OpenShift-friendly)
 ############################################
-FROM alpine:3.24.1
+FROM alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b AS runtime
 
 RUN apk upgrade --no-cache \
     && apk add --no-cache \

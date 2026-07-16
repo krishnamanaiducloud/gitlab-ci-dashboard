@@ -10,7 +10,7 @@ pub struct Group {
 mod tests {
     use serde_json::json;
 
-    use crate::model::{Group, test};
+    use crate::model::{test, Group};
 
     #[test]
     fn group_deserialize() {

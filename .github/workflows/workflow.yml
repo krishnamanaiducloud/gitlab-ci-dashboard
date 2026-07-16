@@ -17,10 +17,10 @@ jobs:
     env:
       TZ: Europe/Amsterdam
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 24
+          node-version: 24.18.0
       - run: npm ci --ignore-scripts --legacy-peer-deps
       - run: npm run test
 
@@ -32,7 +32,11 @@ jobs:
       run:
         working-directory: ./api
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: dtolnay/rust-toolchain@fa04a1451ff1842e2626ccb99004d0195b455a88 # pinned 2026-07-15
+        with:
+          toolchain: 1.96.1
+          components: clippy
       - run: cargo build --verbose
       - run: cargo test --verbose
       - run: cargo clippy --verbose -- -D warnings
@@ -42,7 +46,7 @@ jobs:
     needs: [build-rs, build-ng]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - run: |
           REF_NAME="${{ github.ref_name }}"          
           REF_NAME_LOWER=$(echo "$REF_NAME" | tr '[:upper:]' '[:lower:]')          
@@ -52,28 +56,28 @@ jobs:
             REF_NAME_CLEAN="0$REF_NAME_CLEAN"
           fi          
           echo "CLEANED_REF_NAME=$REF_NAME_CLEAN" >> $GITHUB_ENV
-      - uses: docker/setup-qemu-action@v3
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@v3
+      - uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4.2.0
+      - uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+      - uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
         with:
           registry: docker.io
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - uses: peter-evans/dockerhub-description@v5
+      - uses: peter-evans/dockerhub-description@1b9a80c056b620d92cedb9d9b5a223409c68ddfa # v5.0.0
         if: github.ref == 'refs/heads/main'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: ${{ github.repository }}
           short-description: ${{ github.event.repository.description }}      
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
         if: startsWith(github.ref, 'refs/tags/')
         with:
           context: .
           push: true
           tags: ${{ github.repository }}:latest,${{ github.repository }}:${{ github.ref_name }}
           build-args: VERSION_ARG=v${{ github.ref_name }}
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
         if: startsWith(github.ref, 'refs/heads/')
         with:
           context: .

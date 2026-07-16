@@ -51,7 +51,7 @@ impl JobService {
                         .jobs(project_id, pipeline_id, scope)
                         .await
                         .map(|mut jobs| {
-                            jobs.sort_unstable_by(|a, b| a.created_at.cmp(&b.created_at));
+                            jobs.sort_unstable_by_key(|job| job.created_at);
                             jobs
                         })
                 },

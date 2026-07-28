@@ -161,16 +161,29 @@ If there is a mismatch the HTTP client is still unable to make a proper connecti
 | SERVER_LISTEN_PORT                | int    | The port where the web server should listen on                                                                                     | no       | 8080         |
 | SERVER_WORKER_COUNT               | int    | The amount of worker threads the web server should have                                                                            | no       | CPU specific |
 | RUST_LOG                          | string | The log level of the application, set to "debug" to enable debug logging                                                           | no       | info         |
+| BASE_PATH                        | string | Optional URL prefix such as `/gitlab-ci-dashboard`; `/` and empty mean root                                                         | no       |              |
 
 ## 🔒 Security & Base Images
 
 | Stage | Image | Purpose |
 |-------|-------|---------|
-| Frontend build | `node:24.16-alpine3.23` | Angular build (ephemeral, not in final image) |
-| Backend build | `rust:1.96.0-alpine3.23` | Rust binary compilation (ephemeral) |
-| Certs | `alpine:3.23.4` | Extract CA certificates (ephemeral) |
-| **Runtime** | `gcr.io/distroless/static-debian12:nonroot` | Final production image |
+| Frontend build | `node:24.18.0-alpine3.24` | Angular build (ephemeral, not in final image) |
+| Backend build | `rust:1.96.1-alpine3.24` | Rust binary compilation (ephemeral) |
+| Certs | `alpine:3.24.1` | Extract CA certificates (ephemeral) |
+| **Runtime** | `gcr.io/distroless/static-debian13:nonroot` | Final production image |
 
-The production runtime uses **Google Distroless**, which contains only the compiled binary, CA certs, and timezone data — no shell, no package manager, no OS utilities. This results in a minimal attack surface with near-zero OS vulnerabilities.
+The production runtime uses **Google Distroless**, which contains only the compiled binary, CA certs, and timezone data — no shell, package manager, or general-purpose OS utilities. This keeps the runtime attack surface small; verify the built image with a current vulnerability database before promotion.
 
-Build stages run `apk update && apk upgrade --no-cache` to ensure all packages are at their latest patched versions during image creation. The debug Dockerfile (`Dockerfile-Openshift-debug`) additionally performs explicit upgrades on `libcurl`, `busybox`, `busybox-binsh`, and `ssl_client` to mitigate known CVEs.
+Build stages run package upgrades during image creation. The production runtime is shell-free and package-manager-free.
+
+## Runtime path prefixes
+
+The same image can be served at `/` or at any OpenShift Route/Istio prefix without rebuilding it. Set `BASE_PATH` at
+runtime to the externally visible path, for example `/gitlab-ci-dashboard` or `/tools/ci`. Empty, `/`, missing leading
+slashes, and trailing slashes are normalized by the API. The frontend uses relative assets and rewrites only local
+`/api` requests against the document base, while external GitLab URLs are separately validated.
+
+The proxy must preserve the prefix rather than rewrite it. A request for the prefix without its trailing slash receives
+a permanent redirect so the browser resolves relative assets correctly. Health checks remain available at `/health`
+regardless of the configured prefix. Keep `API_READ_ONLY=true` and `UI_HIDE_WRITE_ACTIONS=true` unless write access is
+explicitly approved.

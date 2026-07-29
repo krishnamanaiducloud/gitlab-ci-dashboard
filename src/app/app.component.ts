@@ -1,4 +1,5 @@
 import { ErrorService } from '$service/error.service'
+import { LoadingService } from '$shared/loading.service'
 
 import { Component, computed, inject } from '@angular/core'
 import { RouterOutlet } from '@angular/router'
@@ -14,8 +15,10 @@ import { HeaderComponent } from './header/header.component'
 })
 export class AppComponent {
   errorService = inject(ErrorService)
+  loadingService = inject(LoadingService)
 
   error = this.errorService.error
+  loading = this.loadingService.loading
 
   get title() {
     return computed(() => {

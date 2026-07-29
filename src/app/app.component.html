@@ -1,3 +1,6 @@
+@if (loading()) {
+  <div class="loadbar" role="progressbar" aria-label="Loading data"><span></span></div>
+}
 <gcd-header />
 @if (error(); as error) {
   <div class="alert">

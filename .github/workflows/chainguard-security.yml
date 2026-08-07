@@ -17,7 +17,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build production image
-        run: docker build --pull --tag local/chainguard-test:${GITHUB_SHA} .
+        run: |
+          set -o pipefail
+          if ! docker build --pull --tag local/chainguard-test:${GITHUB_SHA} . 2>&1 | tee build.log; then
+            message=$(tail -n 25 build.log)
+            message=${message//'%'/'%25'}
+            message=${message//$'\n'/'%0A'}
+            message=${message//$'\r'/'%0D'}
+            echo "::error title=Container build failed::$message"
+            exit 1
+          fi
       - name: Require zero known vulnerabilities
         uses: aquasecurity/trivy-action@v0.36.0
         with:

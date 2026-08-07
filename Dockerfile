@@ -1,10 +1,12 @@
 ############################################
 # 1) Frontend build (Angular - optimized)
 ############################################
-ARG NODE_IMAGE=node:26.6.0-alpine3.24@sha256:a4fb14143ee24c038c851864fe85fd90f9121abc8fdca3092798bcc02e06b1d8
-ARG RUST_IMAGE=rust:1.96.1-alpine3.24@sha256:a41f7740f8b45d45795624eec13a8b42263cc700f19f7e4e86e04d3dda08a479
+ARG NODE_IMAGE=cgr.dev/chainguard/node:latest-dev
+ARG RUST_IMAGE=cgr.dev/chainguard/rust:latest-dev
 
 FROM ${NODE_IMAGE} AS fe
+
+USER root
 
 WORKDIR /builder
 
@@ -26,6 +28,8 @@ RUN npx ng build --base-href=./
 # 2) Backend build (Rust - production optimized)
 ############################################
 FROM ${RUST_IMAGE} AS be
+
+USER root
 
 WORKDIR /builder
 
@@ -64,17 +68,16 @@ RUN test -f target/release/gcd_api
 ############################################
 # 3) Certs + timezone
 ############################################
-FROM alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b AS certs
+FROM cgr.dev/chainguard/wolfi-base:latest AS certs
 
 RUN apk upgrade --no-cache \
-    && apk add --no-cache ca-certificates tzdata \
-    && update-ca-certificates
+    && apk add --no-cache ca-certificates-bundle tzdata
 
 
 ############################################
 # 4) Runtime (OpenShift compliant)
 ############################################
-FROM gcr.io/distroless/static-debian13:nonroot@sha256:f7f8f729987ad0fdf6b05eeeae94b26e6a0f613bdf46feea7fc40f7bd72953e6
+FROM cgr.dev/chainguard/glibc-dynamic:latest
 
 WORKDIR /app
 

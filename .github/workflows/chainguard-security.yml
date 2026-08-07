@@ -1,0 +1,31 @@
+name: Chainguard container security
+
+on:
+  push:
+    branches: [chainguard]
+  pull_request:
+    branches: [chainguard]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-scan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build production image
+        run: docker build --pull --tag local/chainguard-test:${GITHUB_SHA} .
+      - name: Require zero known vulnerabilities
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: local/chainguard-test:${{ github.sha }}
+          scan-type: image
+          scanners: vuln
+          vuln-type: os,library
+          severity: UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
+          ignore-unfixed: false
+          exit-code: '1'
+          format: table

@@ -4,7 +4,7 @@ import { ConfigService } from '$service/config.service'
 import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component, computed, HostListener, inject, input, signal } from '@angular/core'
 import { NzButtonModule } from 'ng-zorro-antd/button'
-import { NzDropDownModule } from 'ng-zorro-antd/dropdown'
+import { NzDropdownModule } from 'ng-zorro-antd/dropdown'
 import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip'
 import { CancelPipelineActionComponent } from './cancel-pipeline-action/cancel-pipeline-action.component'
@@ -17,7 +17,7 @@ import { StartPipelineActionComponent } from './start-pipeline-action/start-pipe
     CommonModule,
     NzButtonModule,
     NzIconModule,
-    NzDropDownModule,
+    NzDropdownModule,
     NzTooltipModule,
     StartPipelineActionComponent,
     CancelPipelineActionComponent,

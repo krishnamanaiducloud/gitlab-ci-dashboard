@@ -1,7 +1,7 @@
 <div class="flex flex-col gap-1">
   <div class="flex items-center">
     <div class="max-width-275">
-      <nz-input-group [nzSuffix]="suffixIcon">
+      <nz-input-wrapper>
         <input
           type="text"
           [(ngModel)]="filterText"
@@ -9,9 +9,8 @@
           aria-label="Filter branches"
           [placeholder]="branchCount() > 0 ? 'Search ' + branchCount() + ' branches...' : 'Search branches...'"
         />
-      </nz-input-group>
-      <ng-template #suffixIcon>
         <button
+          nzInputSuffix
           type="button"
           class="icon-button pointer"
           nz-icon
@@ -22,7 +21,7 @@
           aria-label="Clear branch filter"
           (click)="filterText.set('')"
         ></button>
-      </ng-template>
+      </nz-input-wrapper>
     </div>
   </div>
 </div>

@@ -1,6 +1,6 @@
 <div class="flex items-center">
   <div class="max-width-275">
-    <nz-input-group [nzSuffix]="suffixIcon">
+    <nz-input-wrapper>
       <input
         type="text"
         [(ngModel)]="filterText"
@@ -8,9 +8,8 @@
         aria-label="Filter projects"
         [placeholder]="projectCount() > 0 ? 'Search ' + projectCount() + ' projects...' : 'Search projects...'"
       />
-    </nz-input-group>
-    <ng-template #suffixIcon>
       <button
+        nzInputSuffix
         type="button"
         class="icon-button pointer"
         nz-icon
@@ -21,6 +20,6 @@
         aria-label="Clear project filter"
         (click)="filterText.set('')"
       ></button>
-    </ng-template>
+    </nz-input-wrapper>
   </div>
 </div>

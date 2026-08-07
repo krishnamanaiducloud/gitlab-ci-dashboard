@@ -7,7 +7,7 @@ import { ChangeDetectionStrategy, Component, HostListener, inject, Injector, inp
 import { toObservable, toSignal } from '@angular/core/rxjs-interop'
 import { downloadBlob } from '$shared/download'
 import { NzButtonModule } from 'ng-zorro-antd/button'
-import { NzDropDownModule } from 'ng-zorro-antd/dropdown'
+import { NzDropdownModule } from 'ng-zorro-antd/dropdown'
 import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzNotificationService } from 'ng-zorro-antd/notification'
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip'
@@ -16,7 +16,7 @@ import { StatusColorPipe } from '../../pipes/status-color.pipe'
 
 @Component({
   selector: 'gcd-download-artifacts-icon',
-  imports: [CommonModule, NzButtonModule, NzIconModule, NzDropDownModule, NzTooltipModule, StatusColorPipe],
+  imports: [CommonModule, NzButtonModule, NzIconModule, NzDropdownModule, NzTooltipModule, StatusColorPipe],
   templateUrl: './download-artifacts-icon.component.html',
   styleUrls: ['./download-artifacts-icon.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -1,6 +1,6 @@
 <div class="flex items-center">
   <div class="max-width-275">
-    <nz-input-group [nzSuffix]="suffixIcon">
+    <nz-input-wrapper>
       <input
         type="text"
         nz-input
@@ -10,10 +10,8 @@
         [ngModel]="filterText"
         (ngModelChange)="update($event)"
       />
-    </nz-input-group>
-
-    <ng-template #suffixIcon>
       <button
+        nzInputSuffix
         type="button"
         class="icon-button pointer"
         nz-icon
@@ -24,7 +22,7 @@
         aria-label="Clear filter"
         (click)="clear()"
       ></button>
-    </ng-template>
+    </nz-input-wrapper>
   </div>
 </div>
 

@@ -38,7 +38,7 @@ RUN apk add --no-cache \
     build-base \
     cmake \
     perl \
-    pkgconfig \
+    pkgconf \
     linux-headers
 
 # -------------------------------

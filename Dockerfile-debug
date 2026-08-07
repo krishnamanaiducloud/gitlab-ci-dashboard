@@ -33,7 +33,7 @@ RUN apk add --no-cache \
     build-base \
     cmake \
     perl \
-    pkgconfig \
+    pkgconf \
     linux-headers
 
 COPY api/Cargo.toml api/Cargo.lock ./api/

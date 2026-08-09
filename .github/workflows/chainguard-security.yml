@@ -1,6 +1,8 @@
 name: Chainguard container security
 
 on:
+  schedule:
+    - cron: '17 6 * * 1'
   push:
     branches: [chainguard]
   pull_request:
@@ -16,6 +18,17 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+      - name: Scan dependency manifests and lockfiles
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln
+          vuln-type: library
+          severity: UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
+          ignore-unfixed: false
+          exit-code: '1'
+          format: table
       - name: Build production image
         run: |
           set -o pipefail

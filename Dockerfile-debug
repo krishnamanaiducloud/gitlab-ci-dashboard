@@ -1,8 +1,11 @@
 ############################################
 # 1) Frontend build (Angular)
 ############################################
-ARG NODE_IMAGE=cgr.dev/chainguard/node:latest-dev
-ARG RUST_IMAGE=cgr.dev/chainguard/rust:latest-dev
+ARG NODE_IMAGE=cgr.dev/chainguard/node:latest-dev@sha256:39708a466eb9e1c4a49abc6931dc8aaf8d3d4565fe6977a53bff0ce1c357a405
+ARG RUST_IMAGE=cgr.dev/chainguard/rust:latest-dev@sha256:04ff740c14814353701c10bec4e79bac5d94f10c3e54369e2688bfaf54662092
+ARG PRODUCTION_IMAGE=mohankrishna999/gitlab-ci-dashboard:v8
+
+FROM ${PRODUCTION_IMAGE} AS production
 
 FROM ${NODE_IMAGE} AS fe
 
@@ -50,20 +53,9 @@ RUN test -f target/release/gcd_api
 ############################################
 # 3) Runtime image (Alpine + debug tools, non-root, OpenShift-friendly)
 ############################################
-FROM cgr.dev/chainguard/wolfi-base:latest AS runtime
+FROM ${NODE_IMAGE} AS runtime
 
-RUN apk upgrade --no-cache \
-    && apk add --no-cache \
-        ca-certificates-bundle \
-        tzdata \
-        bash \
-        curl \
-        wget \
-        procps \
-        net-tools \
-        strace \
-        lsof \
-        bind-tools
+USER root
 
 WORKDIR /app
 
@@ -71,9 +63,10 @@ ARG VERSION_ARG=0.0.4
 ENV VERSION=${VERSION_ARG}
 ENV RUST_LOG=debug
 
-# Copy frontend and backend artifacts
-COPY --from=fe /builder/dist/gitlab-ci-dashboard/browser ./spa
-COPY --from=be /builder/api/target/release/gcd_api ./gcd_api
+# Copy the already tested production artifacts. Unreferenced source-build stages are
+# skipped by BuildKit, keeping the debug image byte-for-byte aligned with v8.
+COPY --from=production /app/spa ./spa
+COPY --from=production /app/gcd_api ./gcd_api
 
 # Fix permissions
 RUN chown -R 65532:65532 /app

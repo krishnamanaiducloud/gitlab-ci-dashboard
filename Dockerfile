@@ -1,8 +1,8 @@
 ############################################
 # 1) Frontend build (Angular - optimized)
 ############################################
-ARG NODE_IMAGE=cgr.dev/chainguard/node:latest-dev@sha256:39708a466eb9e1c4a49abc6931dc8aaf8d3d4565fe6977a53bff0ce1c357a405
-ARG RUST_IMAGE=cgr.dev/chainguard/rust:latest-dev@sha256:04ff740c14814353701c10bec4e79bac5d94f10c3e54369e2688bfaf54662092
+ARG NODE_IMAGE=cgr.dev/chainguard/node:latest-dev@sha256:3e17362ebc0747052497d6ee6d8969d3b770b8261b0d15b386726eb57e05e92c
+ARG RUST_IMAGE=cgr.dev/chainguard/rust:latest-dev@sha256:1b1ae6876d6ece680681001ae0f205245ff8e219cce60e86cce283dade11285a
 
 FROM ${NODE_IMAGE} AS fe
 
@@ -12,7 +12,8 @@ WORKDIR /builder
 
 # Install dependencies (cached)
 COPY package*.json ./
-RUN npm ci --legacy-peer-deps --ignore-scripts
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --legacy-peer-deps --ignore-scripts --no-audit --no-fund --prefer-offline
 
 # Copy ONLY required files (avoid cache busting)
 COPY angular.json ./
@@ -51,7 +52,10 @@ WORKDIR /builder/api
 RUN mkdir -p src && echo "fn main() {}" > src/main.rs
 
 # Build dependencies (cached layer)
-RUN cargo build --release
+RUN --mount=type=cache,target=/root/.cargo/registry \
+    --mount=type=cache,target=/root/.cargo/git \
+    --mount=type=cache,target=/builder/api/target \
+    cargo build --release
 
 # -------------------------------
 # Step 2: Copy real source
@@ -59,16 +63,23 @@ RUN cargo build --release
 COPY api/src ./src
 
 # Touch source to invalidate cache and rebuild with real code
-RUN touch src/main.rs && cargo build --release
+RUN --mount=type=cache,target=/root/.cargo/registry \
+    --mount=type=cache,target=/root/.cargo/git \
+    --mount=type=cache,target=/builder/api/target \
+    touch src/main.rs \
+    && cargo build --release \
+    && cp target/release/gcd_api /builder/gcd_api
 
 # Validate binary exists (fail fast)
-RUN test -f target/release/gcd_api
+RUN test -f /builder/gcd_api
 
 
 ############################################
 # 3) Certs + timezone
 ############################################
-FROM cgr.dev/chainguard/wolfi-base:latest@sha256:0a8fd427de5882aed77471b0a432c3675eda6b6a0ae952b5d640b46da628cdbe AS certs
+FROM cgr.dev/chainguard/wolfi-base:latest@sha256:a31344ab2cb8618db84f535eec56f76f6178b142cb92cb2e48676cc2dcebea72 AS certs
+
+USER root
 
 RUN apk upgrade --no-cache \
     && apk add --no-cache ca-certificates-bundle tzdata
@@ -77,7 +88,7 @@ RUN apk upgrade --no-cache \
 ############################################
 # 4) Runtime (OpenShift compliant)
 ############################################
-FROM cgr.dev/chainguard/glibc-dynamic:latest@sha256:df4e22a4b5dcd8e15a51fe9b04e16717d411dd9f4fe4b3844c1bf425b14be303
+FROM cgr.dev/chainguard/glibc-dynamic:latest@sha256:00ccb6b29976452b1fd7a8facec730d9b1a22edc7b7aa772511a68df21dabb5b
 
 WORKDIR /app
 
@@ -94,7 +105,7 @@ COPY --from=certs /usr/share/zoneinfo /usr/share/zoneinfo
 COPY --chown=65532:65532 --from=fe /builder/dist/gitlab-ci-dashboard/browser ./spa
 
 # Copy backend binary
-COPY --chown=65532:65532 --from=be /builder/api/target/release/gcd_api ./gcd_api
+COPY --chown=65532:65532 --from=be /builder/gcd_api ./gcd_api
 
 EXPOSE 8080
 

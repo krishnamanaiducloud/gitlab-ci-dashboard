@@ -1,9 +1,9 @@
 ############################################
 # 1) Frontend build (Angular)
 ############################################
-ARG NODE_IMAGE=cgr.dev/chainguard/node:latest-dev@sha256:39708a466eb9e1c4a49abc6931dc8aaf8d3d4565fe6977a53bff0ce1c357a405
-ARG RUST_IMAGE=cgr.dev/chainguard/rust:latest-dev@sha256:04ff740c14814353701c10bec4e79bac5d94f10c3e54369e2688bfaf54662092
-ARG PRODUCTION_IMAGE=mohankrishna999/gitlab-ci-dashboard:v8
+ARG NODE_IMAGE=cgr.dev/chainguard/node:latest-dev@sha256:3e17362ebc0747052497d6ee6d8969d3b770b8261b0d15b386726eb57e05e92c
+ARG RUST_IMAGE=cgr.dev/chainguard/rust:latest-dev@sha256:1b1ae6876d6ece680681001ae0f205245ff8e219cce60e86cce283dade11285a
+ARG PRODUCTION_IMAGE=mohankrishna999/gitlab-ci-dashboard:v9
 
 FROM ${PRODUCTION_IMAGE} AS production
 
@@ -14,7 +14,7 @@ USER root
 WORKDIR /builder
 
 COPY package*.json ./
-RUN npm ci --legacy-peer-deps --ignore-scripts
+RUN npm ci --legacy-peer-deps --ignore-scripts --no-audit --no-fund
 
 COPY angular.json ./
 COPY tsconfig*.json ./

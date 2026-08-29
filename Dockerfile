@@ -1,8 +1,8 @@
 ############################################
 # 1) Frontend build (Angular - optimized)
 ############################################
-ARG NODE_IMAGE=cgr.dev/chainguard/node:latest-dev@sha256:3e17362ebc0747052497d6ee6d8969d3b770b8261b0d15b386726eb57e05e92c
-ARG RUST_IMAGE=cgr.dev/chainguard/rust:latest-dev@sha256:1b1ae6876d6ece680681001ae0f205245ff8e219cce60e86cce283dade11285a
+ARG NODE_IMAGE=cgr.dev/chainguard/node:latest-dev@sha256:c14f79235064d92d270d82939f52dfc6b68a9728771655857b885b62348532d1
+ARG RUST_IMAGE=cgr.dev/chainguard/rust:latest-dev@sha256:f80fc844dbe5bb5537c284955130ace29e6c073a580bd907a299a6f0f9d416ac
 
 FROM ${NODE_IMAGE} AS fe
 
@@ -77,7 +77,7 @@ RUN test -f /builder/gcd_api
 ############################################
 # 3) Certs + timezone
 ############################################
-FROM cgr.dev/chainguard/wolfi-base:latest@sha256:a31344ab2cb8618db84f535eec56f76f6178b142cb92cb2e48676cc2dcebea72 AS certs
+FROM cgr.dev/chainguard/wolfi-base:latest@sha256:03c6561658909fc4eadd0b2dc717375df40a22cc05455b8f82f1f1974e7e4427 AS certs
 
 USER root
 
@@ -88,7 +88,7 @@ RUN apk upgrade --no-cache \
 ############################################
 # 4) Runtime (OpenShift compliant)
 ############################################
-FROM cgr.dev/chainguard/glibc-dynamic:latest@sha256:00ccb6b29976452b1fd7a8facec730d9b1a22edc7b7aa772511a68df21dabb5b
+FROM cgr.dev/chainguard/glibc-dynamic:latest@sha256:d0046044cd28948d3380eb0d98709dc7e63f98161fe7105135e1025650bad17a
 
 WORKDIR /app
 

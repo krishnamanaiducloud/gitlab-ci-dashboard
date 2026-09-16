@@ -3,7 +3,7 @@
 ############################################
 ARG NODE_IMAGE=cgr.dev/chainguard/node:latest-dev@sha256:5ce325a19f6941e2c922cb9110d3d0c6c555ca82d050bc2ef5d72254792bf243
 ARG RUST_IMAGE=cgr.dev/chainguard/rust:latest-dev@sha256:635c2f1ae6306ebcbeda3857013f065be7e1ed5dff0f8aff7a6a7a1bce459cac
-ARG PRODUCTION_IMAGE=mohankrishna999/gitlab-ci-dashboard:v10
+ARG PRODUCTION_IMAGE=mohankrishna999/gitlab-ci-dashboard:v11
 
 FROM ${PRODUCTION_IMAGE} AS production
 
@@ -64,7 +64,7 @@ ENV VERSION=${VERSION_ARG}
 ENV RUST_LOG=debug
 
 # Copy the already tested production artifacts. Unreferenced source-build stages are
-# skipped by BuildKit, keeping the debug image byte-for-byte aligned with v8.
+# skipped by BuildKit, keeping the debug artifacts aligned with v11.
 COPY --from=production /app/spa ./spa
 COPY --from=production /app/gcd_api ./gcd_api
 

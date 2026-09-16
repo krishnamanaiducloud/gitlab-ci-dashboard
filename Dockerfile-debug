@@ -1,8 +1,8 @@
 ############################################
 # 1) Frontend build (Angular)
 ############################################
-ARG NODE_IMAGE=cgr.dev/chainguard/node:latest-dev@sha256:c14f79235064d92d270d82939f52dfc6b68a9728771655857b885b62348532d1
-ARG RUST_IMAGE=cgr.dev/chainguard/rust:latest-dev@sha256:f80fc844dbe5bb5537c284955130ace29e6c073a580bd907a299a6f0f9d416ac
+ARG NODE_IMAGE=cgr.dev/chainguard/node:latest-dev@sha256:5ce325a19f6941e2c922cb9110d3d0c6c555ca82d050bc2ef5d72254792bf243
+ARG RUST_IMAGE=cgr.dev/chainguard/rust:latest-dev@sha256:635c2f1ae6306ebcbeda3857013f065be7e1ed5dff0f8aff7a6a7a1bce459cac
 ARG PRODUCTION_IMAGE=mohankrishna999/gitlab-ci-dashboard:v10
 
 FROM ${PRODUCTION_IMAGE} AS production

@@ -1,78 +1,19 @@
-############################################
-# 1) Frontend build (Angular)
-############################################
-ARG NODE_IMAGE=cgr.dev/chainguard/node:latest-dev@sha256:5ce325a19f6941e2c922cb9110d3d0c6c555ca82d050bc2ef5d72254792bf243
-ARG RUST_IMAGE=cgr.dev/chainguard/rust:latest-dev@sha256:635c2f1ae6306ebcbeda3857013f065be7e1ed5dff0f8aff7a6a7a1bce459cac
-ARG PRODUCTION_IMAGE=mohankrishna999/gitlab-ci-dashboard:v11
+# Debug runtime: production artifacts plus a small Wolfi shell environment.
+ARG PRODUCTION_IMAGE=mohankrishna999/gitlab-ci-dashboard:v12
+ARG DEBUG_IMAGE=cgr.dev/chainguard/wolfi-base:latest@sha256:3754b6da0e1ccdab0fe46abfdd7bbbba994b593c28149f6659fa6597f2261aeb
 
 FROM ${PRODUCTION_IMAGE} AS production
-
-FROM ${NODE_IMAGE} AS fe
-
-USER root
-
-WORKDIR /builder
-
-COPY package*.json ./
-RUN npm ci --legacy-peer-deps --ignore-scripts --no-audit --no-fund
-
-COPY angular.json ./
-COPY tsconfig*.json ./
-COPY proxy.conf.js ./
-COPY src ./src
-RUN npx ng build --base-href=./
-
-
-############################################
-# 2) Backend build (Rust API — musl/static)
-############################################
-FROM ${RUST_IMAGE} AS be
+FROM ${DEBUG_IMAGE}
 
 USER root
-
-WORKDIR /builder
-
-RUN apk add --no-cache \
-    build-base \
-    cmake \
-    perl \
-    pkgconf \
-    linux-headers
-
-COPY api/Cargo.toml api/Cargo.lock ./api/
-WORKDIR /builder/api
-
-RUN mkdir -p src && echo "fn main() {}" > src/main.rs
-RUN cargo build --release
-
-COPY api/src ./src
-RUN touch src/main.rs && cargo build --release
-RUN test -f target/release/gcd_api
-
-
-############################################
-# 3) Runtime image (Alpine + debug tools, non-root, OpenShift-friendly)
-############################################
-FROM ${NODE_IMAGE} AS runtime
-
-USER root
-
 WORKDIR /app
 
-ARG VERSION_ARG=0.0.4
-ENV VERSION=${VERSION_ARG}
-ENV RUST_LOG=debug
+ENV VERSION=0.0.5 \
+    RUST_LOG=debug
 
-# Copy the already tested production artifacts. Unreferenced source-build stages are
-# skipped by BuildKit, keeping the debug artifacts aligned with v11.
-COPY --from=production /app/spa ./spa
-COPY --from=production /app/gcd_api ./gcd_api
-
-# Fix permissions
-RUN chown -R 65532:65532 /app
+COPY --from=production --chown=65532:65532 /app/spa ./spa
+COPY --from=production --chown=65532:65532 /app/gcd_api ./gcd_api
 
 USER 65532:65532
-
 EXPOSE 8080
-
 ENTRYPOINT ["/app/gcd_api"]

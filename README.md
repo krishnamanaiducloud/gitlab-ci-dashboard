@@ -66,7 +66,7 @@ docker run \
   -p 8080:8080 \
   -e GITLAB_BASE_URL=https://gitlab.com \
   -e GITLAB_API_TOKEN=my_token \
-  krishnamanaiducloud/gitlab-ci-dashboard:latest
+  mohankrishna999/gitlab-ci-dashboard:v13
 ```
 
 Or you can run it with a TOML configration file
@@ -75,7 +75,7 @@ Or you can run it with a TOML configration file
 docker run \
   -p 8080:8080 \
   -v ./config.toml:/app/config.toml \
-  krishnamanaiducloud/gitlab-ci-dashboard:latest
+  mohankrishna999/gitlab-ci-dashboard:v13
 ```
 
 3. Dashboard should be available at: http://localhost:8080/ showing (by default) all available groups and their
@@ -112,7 +112,7 @@ Mount the `config.toml` inside the container (`/app/config.toml`)
 docker run \
   -p 8080:8080 \
   -v ./config.toml:/app/config.toml \
-  krishnamanaiducloud/gitlab-ci-dashboard:latest
+  mohankrishna999/gitlab-ci-dashboard:v13
 ```
 
 ## 📜 Custom CA certificate
@@ -128,7 +128,7 @@ docker run \
   -e GITLAB_BASE_URL=https://gitlab.com \
   -e GITLAB_API_TOKEN=my_token \
   -v ./ca.crt:/app/certs/ca.crt \
-  krishnamanaiducloud/gitlab-ci-dashboard:latest
+  mohankrishna999/gitlab-ci-dashboard:v13
 ```
 
 ### Troubleshooting

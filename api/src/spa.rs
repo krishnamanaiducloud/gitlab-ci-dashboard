@@ -70,7 +70,9 @@ async fn serve_index(
     index_file: String,
 ) -> Result<ServiceResponse, actix_web::Error> {
     let (req, _) = req.into_parts();
-    let file = NamedFile::open_async(&index_file).await?;
+    let file = actix_web::web::block(move || NamedFile::open(index_file))
+        .await
+        .map_err(actix_web::error::ErrorInternalServerError)??;
     let res = file.into_response(&req);
     Ok(ServiceResponse::new(req, res))
 }

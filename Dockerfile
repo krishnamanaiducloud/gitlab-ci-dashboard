@@ -1,10 +1,10 @@
 ############################################
 # 1) Frontend build (Angular - optimized)
 ############################################
-ARG NODE_IMAGE=cgr.dev/chainguard/node:latest-dev@sha256:446b1779a5c4b3d5aca6b05d77b5d7a643eef87b34ec6ba5dc55fd0c9f81a6aa
-ARG RUST_IMAGE=cgr.dev/chainguard/rust:latest-dev@sha256:9bfa04d59a67a0df54c8031ab8469ed8c66b454d3b5d9f675722b75231a86c7b
-ARG NPM_VERSION=12.1.0
-ARG APK_REPOSITORY=https://packages.wolfi.dev/os
+ARG NODE_IMAGE=cgr.dev/chainguard/node:latest-dev@sha256:c73a5061e27b54daadcd0175194a860986f026a40d8b7b77166e6af008ea503b
+ARG RUST_IMAGE=cgr.dev/chainguard/rust:latest-dev@sha256:5df0e538ec0c335f6575681624d16c43add2223e6bd9dfdaa6f80126762b0ca8
+ARG NPM_VERSION=12.0.2
+ARG APK_REPOSITORY=https://apk.cgr.dev/chainguard
 ARG WOLFI_REPO_DIGEST=f0031424cf46f7db780ce63a45f0fd6aa6f85f601e6bb3b7a91fe3d4d5b7d2cc
 
 FROM ${NODE_IMAGE} AS fe
@@ -16,6 +16,7 @@ USER root
 WORKDIR /builder
 
 RUN npm install --global "npm@${NPM_VERSION}" \
+    && hash -r \
     && test "$(npm --version)" = "${NPM_VERSION}"
 
 # Install dependencies (cached)
@@ -48,7 +49,7 @@ COPY wolfi-signing.rsa.pub /tmp/wolfi-signing.rsa.pub
 RUN echo "${WOLFI_REPO_DIGEST}  /tmp/wolfi-signing.rsa.pub" | sha256sum -c - \
     && mv /tmp/wolfi-signing.rsa.pub /etc/apk/keys/wolfi-signing.rsa.pub \
     && printf '%s\n' "${APK_REPOSITORY}" > /etc/apk/repositories \
-    && apk add --no-cache \
+    && apk --timeout 60 add --no-cache \
     build-base \
     cmake \
     perl \
@@ -84,20 +85,20 @@ RUN test -f /builder/gcd_api
 ############################################
 # 3) Certs + timezone
 ############################################
-FROM cgr.dev/chainguard/wolfi-base:latest@sha256:bef0f4d47edc72a93d1537eae54eb53db2b2cc352c028128ff0f16c5b5a3c1e4 AS certs
+FROM cgr.dev/chainguard/wolfi-base:latest@sha256:82d42999b1bc4b2aa724b442d300194901e64563efec75b3245e41f4c09fb6d2 AS certs
 ARG APK_REPOSITORY
 
 USER root
 
 RUN printf '%s\n' "${APK_REPOSITORY}" > /etc/apk/repositories \
-    && apk upgrade --no-cache \
-    && apk add --no-cache ca-certificates-bundle tzdata
+    && apk --timeout 60 upgrade --no-cache \
+    && apk --timeout 60 add --no-cache ca-certificates-bundle tzdata
 
 
 ############################################
 # 4) Runtime (OpenShift compliant)
 ############################################
-FROM cgr.dev/chainguard/glibc-dynamic:latest@sha256:6acf5a19a988abdaf0f3d30247561431a206034e702871442bed66a2c68cc1a2
+FROM cgr.dev/chainguard/glibc-dynamic:latest@sha256:7bb9fa90bfaa2fc685d0df18301e5886ed171c27087602edededf1b099299e6e
 
 WORKDIR /app
 

@@ -1,12 +1,19 @@
 # Debug runtime: production artifacts plus a small Wolfi shell environment.
-ARG PRODUCTION_IMAGE=mohankrishna999/gitlab-ci-dashboard:v13
-ARG DEBUG_IMAGE=cgr.dev/chainguard/wolfi-base:latest@sha256:bef0f4d47edc72a93d1537eae54eb53db2b2cc352c028128ff0f16c5b5a3c1e4
+ARG PRODUCTION_IMAGE=mohankrishna999/gitlab-ci-dashboard:v14
+ARG DEBUG_IMAGE=cgr.dev/chainguard/wolfi-base:latest@sha256:82d42999b1bc4b2aa724b442d300194901e64563efec75b3245e41f4c09fb6d2
+ARG APK_REPOSITORY=https://apk.cgr.dev/chainguard
 
 FROM ${PRODUCTION_IMAGE} AS production
 FROM ${DEBUG_IMAGE}
+ARG APK_REPOSITORY
 
 USER root
 WORKDIR /app
+
+RUN printf '%s\n' "${APK_REPOSITORY}" > /etc/apk/repositories \
+    && apk --timeout 60 upgrade --no-cache \
+    && apk --timeout 60 add --no-cache bash ca-certificates-bundle tzdata \
+    && rm -rf /var/cache/apk/*
 
 ENV VERSION=2.14.0 \
     RUST_LOG=debug

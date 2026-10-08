@@ -1,21 +1,40 @@
 # Debug runtime: production artifacts plus a small Wolfi shell environment.
-ARG PRODUCTION_IMAGE=mohankrishna999/gitlab-ci-dashboard:v14
-ARG DEBUG_IMAGE=cgr.dev/chainguard/wolfi-base:latest@sha256:82d42999b1bc4b2aa724b442d300194901e64563efec75b3245e41f4c09fb6d2
+ARG PRODUCTION_IMAGE=mohankrishna999/gitlab-ci-dashboard:v15
+ARG DEBUG_IMAGE=cgr.dev/chainguard/wolfi-base:latest@sha256:238642d42c5613936474d00b900c4e65fb6f637d8991c913403ff09a09cf43a3
 ARG APK_REPOSITORY=https://apk.cgr.dev/chainguard
+ARG APK_DOWNLOAD_IMAGE=cgr.dev/chainguard/python:latest-dev@sha256:630df1be3733f7b38d1b535872904248adfe23fbea4befcb08da47cb7436ddb2
 
 FROM ${PRODUCTION_IMAGE} AS production
-FROM ${DEBUG_IMAGE}
+FROM ${DEBUG_IMAGE} AS debug-base
+
+# Download with GNU wget, retaining signed APK verification during installation.
+FROM ${APK_DOWNLOAD_IMAGE} AS debug-packages
+ARG APK_REPOSITORY
+USER root
+COPY --from=debug-base /usr/lib/apk/db/installed /tmp/apk-root/usr/lib/apk/db/installed
+COPY --from=debug-base /etc/apk/world /tmp/apk-root/etc/apk/world
+COPY --from=debug-base /etc/apk/keys/ /etc/apk/keys/
+COPY container/prepare-apk-repository.sh /usr/local/bin/prepare-apk-repository.sh
+RUN --mount=type=cache,id=gitlab-dashboard-release-apks,target=/tmp/apks,sharing=locked \
+    sh /usr/local/bin/prepare-apk-repository.sh "$APK_REPOSITORY" /tmp/apk-root bash ca-certificates-bundle tzdata
+
+FROM debug-base AS debug
 ARG APK_REPOSITORY
 
 USER root
 WORKDIR /app
 
-RUN printf '%s\n' "${APK_REPOSITORY}" > /etc/apk/repositories \
-    && apk --timeout 60 upgrade --no-cache \
-    && apk --timeout 60 add --no-cache bash ca-certificates-bundle tzdata \
+RUN --mount=type=bind,from=debug-packages,source=/runtime-repository,target=/runtime-repository \
+    printf '%s\n' /runtime-repository > /etc/apk/repositories \
+    && apk --no-network --no-progress add --no-cache $(cat /runtime-repository/constraints) \
+    && glibc_version="$(awk '/^P:/ { package=$0 } /^V:/ && package == "P:glibc-2.44" { sub(/^V:/, ""); print; exit }' /usr/lib/apk/db/installed)" \
+    && test -n "$glibc_version" \
+    && glibc_comparison="$(apk version -t "$glibc_version" 2.44-r8)" \
+    && test "$glibc_comparison" != '<' \
+    && printf '%s\n' "${APK_REPOSITORY}" > /etc/apk/repositories \
     && rm -rf /var/cache/apk/*
 
-ENV VERSION=2.14.0 \
+ENV VERSION=2.14.1 \
     RUST_LOG=debug
 
 COPY --from=production --chown=65532:65532 /app/spa ./spa

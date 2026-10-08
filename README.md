@@ -66,7 +66,7 @@ docker run \
   -p 8080:8080 \
   -e GITLAB_BASE_URL=https://gitlab.com \
   -e GITLAB_API_TOKEN=my_token \
-  mohankrishna999/gitlab-ci-dashboard:v14
+  mohankrishna999/gitlab-ci-dashboard:v15
 ```
 
 Or you can run it with a TOML configration file
@@ -75,7 +75,7 @@ Or you can run it with a TOML configration file
 docker run \
   -p 8080:8080 \
   -v ./config.toml:/app/config.toml \
-  mohankrishna999/gitlab-ci-dashboard:v14
+  mohankrishna999/gitlab-ci-dashboard:v15
 ```
 
 3. Dashboard should be available at: http://localhost:8080/ showing (by default) all available groups and their
@@ -112,7 +112,7 @@ Mount the `config.toml` inside the container (`/app/config.toml`)
 docker run \
   -p 8080:8080 \
   -v ./config.toml:/app/config.toml \
-  mohankrishna999/gitlab-ci-dashboard:v14
+  mohankrishna999/gitlab-ci-dashboard:v15
 ```
 
 ## 📜 Custom CA certificate
@@ -128,7 +128,7 @@ docker run \
   -e GITLAB_BASE_URL=https://gitlab.com \
   -e GITLAB_API_TOKEN=my_token \
   -v ./ca.crt:/app/certs/ca.crt \
-  mohankrishna999/gitlab-ci-dashboard:v14
+  mohankrishna999/gitlab-ci-dashboard:v15
 ```
 
 ### Troubleshooting
@@ -167,14 +167,14 @@ If there is a mismatch the HTTP client is still unable to make a proper connecti
 
 | Stage | Image | Purpose |
 |-------|-------|---------|
-| Frontend build | `node:24.18.0-alpine3.24` | Angular build (ephemeral, not in final image) |
-| Backend build | `rust:1.96.1-alpine3.24` | Rust binary compilation (ephemeral) |
-| Certs | `alpine:3.24.1` | Extract CA certificates (ephemeral) |
-| **Runtime** | `gcr.io/distroless/static-debian13:nonroot` | Final production image |
+| Frontend build | digest-pinned Chainguard Node | Angular build (ephemeral, not in final image) |
+| Backend build | digest-pinned Chainguard Rust | Rust binary compilation (ephemeral) |
+| Certs | digest-pinned Chainguard Wolfi | Extract CA certificates (ephemeral) |
+| **Runtime** | digest-pinned Chainguard glibc-dynamic | Final production image |
 
-The production runtime uses **Google Distroless**, which contains only the compiled binary, CA certs, and timezone data — no shell, package manager, or general-purpose OS utilities. This keeps the runtime attack surface small; verify the built image with a current vulnerability database before promotion.
+The production runtime uses Chainguard glibc-dynamic with the compiled binary, CA certificates and timezone data, without a shell or package manager. The debug image reuses the production artifacts in a shell-capable Wolfi runtime. Verify both images with a current vulnerability database before promotion.
 
-Build stages run package upgrades during image creation. The production runtime is shell-free and package-manager-free.
+The v15 image release carries application version 2.14.1. Angular build tooling is updated to 22.2.2, jsdom to 30.1.2, Node type definitions to 26.6.4 and Tokio to 1.53.2. The build-only `source-map-js` package is pinned to 1.2.2 to fix the advisory affecting earlier releases. TypeScript remains at 6.0.3 because Angular 22.2 requires TypeScript >=6.0 and <6.1; TypeScript 7 is not a compatible update. Base image digests and dependency lockfiles are committed together. Frontend and backend unit tests run during the production image build.
 
 ## Runtime path prefixes
 

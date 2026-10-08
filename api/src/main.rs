@@ -56,7 +56,7 @@ async fn main() -> std::io::Result<()> {
         }
     );
 
-    log::debug!("{app_config:?}");
+    log::debug!("Server worker count: {}", app_config.server_workers);
     log::debug!("{api_config:?}");
 
     let api_config = Data::new(api_config);

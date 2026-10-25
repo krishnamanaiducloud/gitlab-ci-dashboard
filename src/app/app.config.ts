@@ -21,7 +21,8 @@ import {
   CloseCircleOutline,
   CloseCircleFill,
   CloseSquareOutline,
-  CloseSquareFill
+  CloseSquareFill,
+  DownloadOutline
 } from '@ant-design/icons-angular/icons';
 
 import { provideNzIcons } from 'ng-zorro-antd/icon';
@@ -48,7 +49,8 @@ export const appConfig: ApplicationConfig = {
       CloseCircleOutline,
       CloseCircleFill,
       CloseSquareOutline,
-      CloseSquareFill
+      CloseSquareFill,
+      DownloadOutline
     ]),
 
     provideI18n()

@@ -8,6 +8,8 @@ import { forkJoinFlatten } from '$groups/util/fork'
 import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, input, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
+import { NzButtonModule } from 'ng-zorro-antd/button'
+import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzSpinModule } from 'ng-zorro-antd/spin'
 import { finalize, switchMap } from 'rxjs'
 import { JobFilterComponent } from '../components/job-filter/job-filter.component'
@@ -22,6 +24,8 @@ import { downloadCsv } from '$shared/csv'
   selector: 'gcd-schedules',
   imports: [
     CommonModule,
+    NzButtonModule,
+    NzIconModule,
     NzSpinModule,
     ScheduleTableComponent,
     ProjectFilterComponent,

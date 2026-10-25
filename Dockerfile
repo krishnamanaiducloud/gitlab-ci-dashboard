@@ -1,12 +1,12 @@
 ############################################
 # 1) Frontend build (Angular - optimized)
 ############################################
-ARG NODE_IMAGE=cgr.dev/chainguard/node:latest-dev@sha256:617061855f341917060d95d164930fd949ed19e66fdc2918eabd2eefe2b29ae6
-ARG RUST_IMAGE=cgr.dev/chainguard/rust:latest-dev@sha256:72490a904a8a150d7255515389f2117367a71fb79fd5485742cb139cb8a0dcd5
-ARG NPM_VERSION=12.2.0
+ARG NODE_IMAGE=cgr.dev/chainguard/node:latest-dev@sha256:13afe2c05d49286578b74c4a14b8e4bbe70e98828abeb3d0ea9f9fd2af4cc431
+ARG RUST_IMAGE=cgr.dev/chainguard/rust:latest-dev@sha256:3b50cecf04a9ef03416637dcba27a1ea1e612e4ad4ee04b96f347af60948910b
+ARG NPM_VERSION=12.2.1
 ARG APK_REPOSITORY=https://apk.cgr.dev/chainguard
 ARG WOLFI_REPO_DIGEST=f0031424cf46f7db780ce63a45f0fd6aa6f85f601e6bb3b7a91fe3d4d5b7d2cc
-ARG APK_DOWNLOAD_IMAGE=cgr.dev/chainguard/python:latest-dev@sha256:630df1be3733f7b38d1b535872904248adfe23fbea4befcb08da47cb7436ddb2
+ARG APK_DOWNLOAD_IMAGE=cgr.dev/chainguard/python:latest-dev@sha256:c179c7d8e23caed59a51ff74d4742f8f8d3f16af4c33c40acaf8d3ee07234592
 
 FROM ${NODE_IMAGE} AS fe
 
@@ -95,13 +95,13 @@ RUN test -f /builder/gcd_api
 # 3) Certs + timezone
 ############################################
 # The pinned static base includes the complete CA/timezone assets without APK downloads.
-FROM cgr.dev/chainguard/static:latest@sha256:fe55470f22d3259488d9d3739168d8f04da67755f0b69382bc26eda4a7d3d327 AS certs
+FROM cgr.dev/chainguard/static:latest@sha256:c12f0107f8afb0bbc1b0eff96ff8675e85a10c6083d039b777c51fef5c27420f AS certs
 
 
 ############################################
 # 4) Runtime (OpenShift compliant)
 ############################################
-FROM cgr.dev/chainguard/glibc-dynamic:latest@sha256:2a3f1ec8a825dfbb1211b5835a9b8b3fb8d76c7bd22a189b1f84157ed2028293
+FROM cgr.dev/chainguard/glibc-dynamic:latest@sha256:2827063c9efb4ba971d8621eb75f4e61b8d19850a6293a797df37358cc6f687b
 
 WORKDIR /app
 

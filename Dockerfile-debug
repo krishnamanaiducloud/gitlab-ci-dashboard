@@ -1,8 +1,8 @@
 # Debug runtime: production artifacts plus a small Wolfi shell environment.
-ARG PRODUCTION_IMAGE=mohankrishna999/gitlab-ci-dashboard:v15
-ARG DEBUG_IMAGE=cgr.dev/chainguard/wolfi-base:latest@sha256:238642d42c5613936474d00b900c4e65fb6f637d8991c913403ff09a09cf43a3
+ARG PRODUCTION_IMAGE=mohankrishna999/gitlab-ci-dashboard:v16
+ARG DEBUG_IMAGE=cgr.dev/chainguard/wolfi-base:latest@sha256:360896efb0753a5701c48f860e17130c205eae5a264797aa3e7ea126ee2923a7
 ARG APK_REPOSITORY=https://apk.cgr.dev/chainguard
-ARG APK_DOWNLOAD_IMAGE=cgr.dev/chainguard/python:latest-dev@sha256:630df1be3733f7b38d1b535872904248adfe23fbea4befcb08da47cb7436ddb2
+ARG APK_DOWNLOAD_IMAGE=cgr.dev/chainguard/python:latest-dev@sha256:c179c7d8e23caed59a51ff74d4742f8f8d3f16af4c33c40acaf8d3ee07234592
 
 FROM ${PRODUCTION_IMAGE} AS production
 FROM ${DEBUG_IMAGE} AS debug-base

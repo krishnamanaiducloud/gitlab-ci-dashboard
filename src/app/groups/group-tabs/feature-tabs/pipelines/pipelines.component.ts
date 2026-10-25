@@ -7,6 +7,8 @@ import { forkJoinFlatten } from '$groups/util/fork'
 import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, input, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
+import { NzButtonModule } from 'ng-zorro-antd/button'
+import { NzIconModule } from 'ng-zorro-antd/icon'
 import { NzSpinModule } from 'ng-zorro-antd/spin'
 import { finalize, switchMap } from 'rxjs'
 import { ProjectFilterComponent } from '../components/project-filter/project-filter.component'
@@ -23,6 +25,8 @@ const STORAGE_KEY = 'pinned_pipelines'
   selector: 'gcd-pipelines',
   imports: [
     CommonModule,
+    NzButtonModule,
+    NzIconModule,
     NzSpinModule,
     ProjectFilterComponent,
     TopicFilterComponent,
